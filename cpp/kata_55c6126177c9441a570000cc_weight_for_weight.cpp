@@ -12,39 +12,51 @@ using std::vector;
 using std::istringstream;
 using std::getline;
 using std::stoi;
+using std::pair;
+using std::sort;
 
 class WeightSort
 {
 public:
     static string orderWeight(const string &strng);
+    static string join(const vector<pair<string, int>> &, const string &);
 };
 
+string WeightSort::join(const vector<pair<string, int>> &v, const string &delim = " "){
+    string out;
+    // if (auto i = v.begin(), e = v.end(); i != e){
+    //     out += i->first;
+    // }
+    for(auto i = v.begin(); i != v.end(); ++i) out.append(i->first).append(delim);
+
+    out.erase(std::find_if(out.rbegin(), out.rend(), std::bind1st(std::not_equal_to<char>(), ' ')).base(), out.end());
+    return out;
+}
+
 string WeightSort::orderWeight(const string &strng){
-    vector<vector<int>> v;
+    vector<pair<string,int>> vp;
     istringstream ss(strng);
     string s;
     while(getline(ss, s, ' ')){
-        vector<int> vi;
+        int sum = 0;
         for(const auto& ch: s){
             int num = stoi(string(1,ch));
-            vi.push_back(num);
+            sum += num;
         }
-        v.push_back(vi);
+        vp.push_back(pair<string, int>(s, sum));
     }
-    vector<int> sumv;
-    for(vector<int> vi: v){
-        int sum = 0;
-        for(int i: vi){
-            sum+=i;
-        }
-        sumv.push_back(sum);
+    for(auto i = vp.begin(); i != vp.end(); i++){
+        cout << "s: " << i->first << " sum: " << i->second << endl;
     }
-    for(int i: sumv){
-        cout << i << endl;
+    sort(vp.begin(), vp.end(), [=](pair<string, int>  &a, pair<string,int>& b){
+            return a.second < b.second;
+    });
+    cout << "\n";
+    for(auto i = vp.begin(); i != vp.end(); i++){
+        cout << "s: " << i->first << " sum: " << i->second << endl;
     }
-    //TODO: use a vector of pairs or hashmap to store string, and added value
-    // { "103", 4 } , {"123", 6}
-    return strng; 
+    string final = join(vp, " ");
+    return final; 
 }
 
 int main(){
