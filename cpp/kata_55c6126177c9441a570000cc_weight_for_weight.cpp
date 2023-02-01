@@ -14,6 +14,7 @@ using std::getline;
 using std::stoi;
 using std::pair;
 using std::sort;
+using std::stable_sort;
 
 class WeightSort
 {
@@ -49,7 +50,9 @@ string WeightSort::orderWeight(const string &strng){
         cout << "s: " << i->first << " sum: " << i->second << endl;
     }
     sort(vp.begin(), vp.end(), [=](pair<string, int>  &a, pair<string,int>& b){
-            return a.second < b.second;
+            // if a.second and b.second are equal, compare with the string instead
+            // otherwise keep comparing with the ints
+            return a.second == b.second ? a.first < b.first : a.second < b.second;
     });
     cout << "\n";
     for(auto i = vp.begin(); i != vp.end(); i++){
