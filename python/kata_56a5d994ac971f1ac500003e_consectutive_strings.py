@@ -1,4 +1,4 @@
-from itertools import tee
+from itertools import tee, islice, chain, repeat
 
 
 def pairwise(itt):
@@ -12,12 +12,19 @@ def longest_consec(strarr, k):
         print(strarr[::k])
 
 
+def chunk_pad(it, size, padval=None):
+    it = chain(iter(it), repeat(padval))
+    return iter(lambda: tuple(islice(it, size)), (padval,) * size)
+
+
 def main():
     l = ["zone", "abigail", "theta", "form", "libe", "zas"]
-    longest_consec(l, 2)
+    ll = list(chunk_pad(l, 3))
+    # longest_consec(l, 2)
     print("pairwise\n")
-    for x, y in pairwise(l):
-        print(x, y)
+    print(ll)
+    # for x, y in pairwise(l):
+    #     print(x, y)
 
 
 if __name__ == "__main__":
