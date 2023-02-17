@@ -1,9 +1,12 @@
+#include <exception>
 #include <iterator>
 #include <string>
 #include <string_view>
 #include <vector>
 #include <iostream>
 #include <sstream>
+#include <stack>
+#include <cctype>
 
 using std::vector;
 using std::string_view;
@@ -15,6 +18,19 @@ using std::string;
 using std::begin;
 using std::end;
 using std::prev;
+using std::stack;
+using std::isalpha;
+
+class VersionException : public std::exception{
+    private:
+        char * message_;
+
+    public:
+        VersionException(char * msg) : message_(msg){}
+        char * what () {
+            return message_;
+        }
+};
 
 
 class VersionManager
@@ -26,13 +42,14 @@ class VersionManager
         VersionManager& patch();
         VersionManager& rollback();
         string release();
-        void check(string_view&);
-        void set_rollback_version(string_view&);
+        void check(string_view);
+        void set_rb_version();
         string_view* build_string();
+        void join(vector<int>&, ostringstream&);
         
     private:
+        stack<vector<int>> svi_old_ver_;
         string_view version_;
-        string_view rollback_version_;
         int MAJOR_;
         int MINOR_;
         int PATCH_;
@@ -46,6 +63,7 @@ VersionManager::VersionManager(string_view version)
     }
 
 VersionManager& VersionManager::major(){
+    set_rb_version();
     ++MAJOR_;
     MINOR_ = 0;
     PATCH_ = 0;
@@ -53,13 +71,29 @@ VersionManager& VersionManager::major(){
 }
 
 VersionManager& VersionManager::minor(){
+    set_rb_version();
     ++MINOR_;
     PATCH_ = 0;
     return *this;
 }
 
 VersionManager& VersionManager::patch(){
+    set_rb_version();
     ++PATCH_;
+    return *this;
+}
+
+VersionManager& VersionManager::rollback(){
+    if(svi_old_ver_.empty()){
+        throw VersionException("Cannot rollback!");
+        return *this;
+    }
+    vector<int> vi = svi_old_ver_.top();
+    ostringstream oss;
+    join(vi, oss);
+    check(oss.str());
+    version_ = oss.str();
+    svi_old_ver_.pop();
     return *this;
 }
 
@@ -67,9 +101,13 @@ string VersionManager::release(){
 
     vector<int> str_v = {MAJOR_, MINOR_, PATCH_};
     ostringstream oss;
+    join(str_v, oss);
+    return oss.str();
+}
 
+void VersionManager::join(vector<int>& vi, ostringstream& oss){
     // joining a vector<int> with delimeter '.'
-    auto b = begin(str_v), e = end(str_v);
+    auto b = begin(vi), e = end(vi);
     if(b != e){
         std::copy(
             b, prev(e), std::ostream_iterator<int>(oss, "."));
@@ -78,16 +116,21 @@ string VersionManager::release(){
     if(b != e){
         oss << *b;
     }
-    return oss.str();
 }
 
-void VersionManager::check(string_view& str){
+void VersionManager::check(string_view str){
     // vector<string> vs;
     vector<int> vi;
     istringstream ss(string(str), std::ios_base::in);
     string temp;
     //this loop will split string with delimeter '.'
     while(std::getline(ss, temp, '.')){
+        if(vi.size() >= 3) break;
+            if(isalpha(temp[0])){
+                // cout << "character is a letter: " << temp << endl;
+                throw VersionException("Error occured while parsing version!");
+                break;
+            } 
         vi.push_back(std::stoi(temp));
     }
     // for(auto& i : vi) cout << i << endl;
@@ -103,24 +146,38 @@ void VersionManager::check(string_view& str){
     }
     else{
         MAJOR_ = vi[0];
-        MINOR_ = vi[1];
-        PATCH_ = vi[2];
+        MINOR_ = vi[1]; PATCH_ = vi[2];
     }
 }
 
-void VersionManager::set_rollback_version(string_view& rb_string){
-    
+void VersionManager::set_rb_version(){
+    vector<int> vi = {MAJOR_, MINOR_, PATCH_};
+    ostringstream oss;
+    join(vi, oss);
+    // cout << "rollback version: " << oss.str() << endl;
+    svi_old_ver_.push(vi);
 }
+
 // Implement methods here.
 // Use preloaded VersionException class for throwing exceptions.
 
 int main(){
-    cout << VersionManager().major().release() << endl;
-    cout << VersionManager().minor().release() << endl;
-    cout << VersionManager().patch().release() << endl;
-    cout << VersionManager("4").minor().patch().patch().release() << endl;
-    cout << VersionManager("1.2.3").major().major().release() << endl;
-    cout << "empty string: " << VersionManager("0.2.1").release() << endl;
+    // cout << VersionManager("a.b.c").release() << endl;
+    // cout << VersionManager().minor().release() << endl;
+    // cout << VersionManager().patch().release() << endl;
+    // cout << VersionManager("4").minor().patch().patch().release() << endl;
+    // cout << VersionManager("1.2.3").major().major().release() << endl;
+    // cout << "rollback: VersionManager(1): " << VersionManager("1").major().minor().rollback().release() << endl;
+    // cout << "rollback: VersionManager(): " << VersionManager().major().rollback().release() << endl;
+    // cout << "empty string: " << VersionManager("0.2.1").release() << endl;
+    // cout << VersionManager().major().patch().rollback().release() << endl;
+    // cout << VersionManager().major().patch().rollback().major().rollback().release() << endl;
+    cout << "VersionManager.major().patch().release() " << endl;
+    cout << VersionManager().major().patch().release() << endl;
+
+    cout << "rollback()" << endl << VersionManager().major().patch().rollback().release() << endl;
+    // cout << VersionManager().major().patch().rollback().rollback().release() << endl;
+
     // vm.print();
     // vm.release();
     return 0;
