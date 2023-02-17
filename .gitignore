@@ -1,1 +1,3 @@
 *.out
+.ccls
+compile_flags.txt
