@@ -3,19 +3,47 @@ der = []
 
 def derivative(eq):
     global der
-    terms = eq.split("+")
-    # if len(eq.split("+")) == 1 and "x" not in eq:
-    #     return str(0)
-    for i in terms:
-        x = check_term(i)
-    # if len(der) == 1:
-    #     der_string = "".join(der)
-    # else:
-    # der_string = f"{'+'.join(der)}"
-    print(f"der is: {der}")
-    filtered_list = [i for i in der if i != "0"]
-    der_string = f"{'+'.join(filtered_list)}"
     der.clear()
+    print(f"eq is: {eq}")
+    # terms = (
+    #     eq.split("+")
+    #     if "+" in eq
+    #     else "".join(
+    #         map(
+    #             lambda x: x
+    #             if (x != "+-" and x != "-")
+    #             else "+-"
+    #             if (x == "-")
+    #             else "-",
+    #             eq,
+    #         )
+    #     ).split("+")
+    # )
+    terms = "".join(
+        map(
+            lambda x: x if (x != "+-" and x != "-") else "+-" if (x == "-") else "-",
+            eq,
+        )
+    ).split("+")
+
+    print(f"terms: {terms}")
+    terms = [i for i in terms if i != ""]
+    print(f"terms: {terms}")
+
+    for i in terms:
+        check_term(i)
+    print(f"der is: {der}")
+    filtered_list = (
+        [i for i in der if i != "0"] if (len(der) >= 1 and der[0] != "0") else f"0"
+    )
+    temp_string = f"{'+'.join(filtered_list)}"
+    der_string = (
+        f"{'+'.join(filtered_list)}"
+        if "+-" not in temp_string
+        else f"{temp_string.replace('+-','-')}"
+    )
+    der.clear()
+    print(f"der_string is: {der_string}")
     return der_string
 
 
@@ -107,11 +135,11 @@ def check_term(t):
                     der.append(f"{coeff_res}")
             else:
                 coeff_i = int(t2[0])
-                exp_i = int(t2[1])
-                exp_right = int(exp_i) - 1
-                coeff_res = coeff_i * exp_i
-                der.append(f"{coeff_res}")
-                print(f"negative coeff: {coeff_res}")
+                # exp_i = int(t2[1])
+                # exp_right = int(exp_i) - 1
+                # coeff_res = coeff_i
+                der.append(f"{coeff_i}")
+                print(f"negative coeff: {coeff_i}")
         else:
             # after split on single x, you find ['', '']
             print(f"single x, no negative sign")
@@ -129,30 +157,24 @@ def check_term(t):
     else:
         print("only coeff")
         # no x
+        # check where the negative sign is positioned
         if "-" in t:
             print("no x, with negative sign")
             print(f"t is: {t}")
+            # print(f"len of term: {len(t)}")
+            # negative sign is on the end
+            # if t[-1] == "-":
+            #     print(f"coeff_res is: {coeff_res}")
+            #     der.append(str(coeff_res))
+            # else:
             der.append(str(coeff_res))
-            pass
         else:
             print("no x")
             print(f"t is: {t}")
-            if len(der) == 0:
-                coeff_res = 0
-                der.append(str(coeff_res))
+            # if len(der) == 0:
+            #     coeff_res = 0
+            #     der.append(str(coeff_res))
             der.append(str(coeff_res))
-
-    # global der
-    # der_string = "+".join(der)
-    # return der_string
-
-    # print(coeff)
-    # print(exp)
-    # else assume x^1
-    # check if it has a coefficient
-    # if true, multiply by 1, return product
-    # else return 1
-    # print(t.split("^"))
 
 
 def main():
@@ -163,8 +185,8 @@ def main():
     # print(derivative("-x^2+3x+4"))
     # print("x^2+3x+4")
     # print(derivative("x^2+3x+4"))
-    print("2x+100")
-    print(derivative("2x+100"))
+    print("69x^14-66x^13-19x^6+5x^3")
+    print(derivative("69x^14-66x^13-19x^6+5x^3"))
     # print("x+4")
     # print(derivative("x+4"))
     # print("-100")
