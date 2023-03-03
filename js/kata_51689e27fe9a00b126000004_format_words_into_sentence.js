@@ -33,6 +33,20 @@ function formatWords(words) {
   // console.log(match)
 }
 
+// nice solution:
+// function formatWords(words){
+//   return (words || [])
+//   .filter(w => w)
+//   .join(', ')
+//   .replace(/, ([^,]+)$/, ' and $1');
+// }
+
+// filter will filter out empty strings
+tip: ["a", "", "b"].filter((i) => i)[
+  //output
+  ("a", "c")
+]
+
 // console.log(formatWords(["one", "two", "three", "four"]))
 console.log(formatWords(["one", "", "three"]))
 // console.log(formatWords(null))
