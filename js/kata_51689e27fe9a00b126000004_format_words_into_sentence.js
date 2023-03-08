@@ -42,10 +42,10 @@ function formatWords(words) {
 // }
 
 // filter will filter out empty strings
-// tip: ["a", "", "b"].filter((i) => i)[
+// tip: ["a", "", "b"].filter((i) => i)
 //   //output
 //   ("a", "c")
-// ]
+//
 
 // console.log(formatWords(["one", "two", "three", "four"]))
 console.log(formatWords(["one", "", "three"]))
