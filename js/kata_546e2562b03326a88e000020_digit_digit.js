@@ -1,9 +1,11 @@
 function squareDigits(num) {
-  return num
-    .toString()
-    .split("")
-    .map((i) => parseInt(i) * parseInt(i))
-    .join("")
+  return parseInt(
+    num
+      .toString()
+      .split("")
+      .map((i) => parseInt(i) * parseInt(i))
+      .join("")
+  )
 }
 
 n = squareDigits(3212)
