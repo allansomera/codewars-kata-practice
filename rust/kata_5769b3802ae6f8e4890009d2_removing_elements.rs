@@ -9,7 +9,7 @@ fn remove_every_other(arr: &[u8]) -> Vec<u8> {
 }
 
 fn main() {
-    println!("{:?}", remove_every_other(&[1, 2, 3, 4, 5, 6, 7, 8]))
+    println!("{:?}", remove_every_other(&[1, 2, 3, 4, 5, 6, 7, 8]));
 }
 
 // soln:

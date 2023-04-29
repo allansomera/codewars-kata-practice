@@ -8,7 +8,7 @@ fn invert(values: &[i32]) -> Vec<i32> {
 }
 
 fn main() {
-    println!("{:?}", invert(&vec![-1, 2, 3, 4, 5]))
+    println!("{:?}", invert(&vec![-1, 2, 3, 4, 5]));
 }
 
 // soln:
