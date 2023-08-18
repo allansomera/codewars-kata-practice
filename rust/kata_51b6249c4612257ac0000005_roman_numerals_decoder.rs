@@ -10,12 +10,27 @@ fn roman_as_num(roman: &str) -> u64 {
         ("D", 500),
         ("M", 1000),
     ]);
+    let r = vec!["I", "V", "X", "L", "C", "D", "M"];
+    // let s = roman
+    //     .chars()
+    //     .map(|x| x.to_string())
+    //     .collect::<Vec<String>>();
 
     let vs: Vec<String> = roman.chars().map(|x| x.to_string()).collect::<Vec<_>>();
+    let vs_idx = roman
+        .chars()
+        .map(|x| {
+            r.clone()
+                .into_iter()
+                .position(|r| r.to_string() == x.to_string())
+                .unwrap()
+        })
+        .collect::<Vec<_>>();
     let find_x = vs.iter().position(|x| x == "X").unwrap();
-    println!("{:?}", vs);
-    println!("{:?}", find_x);
-    println!("{:?}", conversions);
+    println!("vs: {:?}", vs);
+    println!("find_x: {:?}", find_x);
+    println!("conversions: {:?}", conversions);
+    println!("vs_idx: {:?}", vs_idx);
     1
 }
 
