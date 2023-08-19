@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 fn roman_as_num(roman: &str) -> u64 {
-    let conversions = HashMap::from([
+    let _conversions = HashMap::from([
         ("I", 1),
         ("V", 5),
         ("X", 10),
@@ -26,14 +26,20 @@ fn roman_as_num(roman: &str) -> u64 {
                 .unwrap()
         })
         .collect::<Vec<_>>();
-    let find_x = vs.iter().position(|x| x == "X").unwrap();
+    // let find_x = vs.iter().position(|x| x == "X").unwrap_or_default();
     println!("vs: {:?}", vs);
-    println!("find_x: {:?}", find_x);
-    println!("conversions: {:?}", conversions);
+    // println!("find_x: {:?}", find_x);
+    // println!("conversions: {:?}", conversions);
+    println!("r: {:?}", r);
     println!("vs_idx: {:?}", vs_idx);
     1
 }
 
 fn main() {
-    println!("{:?}", roman_as_num("XXI"))
+    println!("{:?}", roman_as_num("XXI"));
+    println!("{:?}", roman_as_num("MDCLXVI"));
+    println!("{:?}", roman_as_num("MMVIII"));
+    println!("{:?}", roman_as_num("MCMXC"));
+    println!("{:?}", roman_as_num("MMMCM"));
+    println!("{:?}", roman_as_num("IX"));
 }
