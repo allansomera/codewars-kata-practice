@@ -27,18 +27,32 @@ fn roman_as_num(roman: &str) -> u64 {
         })
         .collect::<Vec<_>>();
     // let find_x = vs.iter().position(|x| x == "X").unwrap_or_default();
+    let mut prev: i32 = *vs_idx.first().unwrap() as i32;
+    let mut vs_greater: Vec<i32> = Vec::new();
+    for (i, x) in vs_idx.iter().enumerate() {
+        if i == 0 {
+            // prev = *x as i32;
+            vs_greater.push(0);
+            continue;
+        }
+        if *x as i32 > prev {
+            vs_greater.push(1);
+        } else {
+            vs_greater.push(0);
+        }
+        prev = *x as i32;
+    }
     println!("vs: {:?}", vs);
     // println!("find_x: {:?}", find_x);
     // println!("conversions: {:?}", conversions);
     println!("r: {:?}", r);
     println!("vs_idx: {:?}", vs_idx);
+    println!("vs_greater: {:?}", vs_greater);
     1
 }
 
 fn main() {
     println!("{:?}", roman_as_num("XXI"));
-    println!("{:?}", roman_as_num("MDCLXVI"));
-    println!("{:?}", roman_as_num("MMVIII"));
     println!("{:?}", roman_as_num("MCMXC"));
     println!("{:?}", roman_as_num("MMMCM"));
     println!("{:?}", roman_as_num("IX"));
