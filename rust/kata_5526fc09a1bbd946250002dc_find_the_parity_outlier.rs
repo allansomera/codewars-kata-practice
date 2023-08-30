@@ -10,16 +10,20 @@ fn find_outlier(values: &[i32]) -> i32 {
         }
         m
     });
+    println!("{:?}", values);
+
+    println!("hs 0: {:?}", *hs.get(&0).unwrap());
+    println!("hs 1: {:?}", *hs.get(&1).unwrap());
     if *hs.get(&0).unwrap() > *hs.get(&1).unwrap() {
         println!(
             "pos even: {:?}",
-            values.into_iter().position(|&x| x % 2 == 1)
+            values.into_iter().position(|&x| x % 2 == 1).unwrap()
         );
         values[values.iter().position(|&x| x % 2 == 1).unwrap() as usize]
     } else {
         println!(
             "pos odd: {:?}",
-            values.into_iter().position(|&x| x % 2 == 1)
+            values.into_iter().position(|&x| x % 2 == 1).unwrap()
         );
         values[values.iter().position(|&x| x % 2 == 0).unwrap() as usize]
     }
