@@ -5,8 +5,9 @@ fn solve(arr: &[u32; 3]) -> u32 {
     let mut keep_going = true;
 
     while keep_going {
+        for i in b.iter() {}
         for (i, el) in b.into_iter().enumerate() {
-            if chips < 3 && *el != 0 as u32 {
+            if chips <= 2 && *el != 0 as u32 {
                 b[i] -= 1;
             } else if chips == 2u32 {
                 day_count += 1u32;
