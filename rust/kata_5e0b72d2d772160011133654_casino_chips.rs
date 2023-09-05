@@ -4,8 +4,11 @@ fn solve(arr: &[u32; 3]) -> u32 {
     let mut b = arr.clone();
     let mut keep_going = true;
 
+    let max_val = b.into_iter().max().unwrap();
+    println!("max val: {:?}", max_val);
+
     while keep_going {
-        for i in b.iter() {}
+        // for i in b.iter() {}
         for (i, el) in b.into_iter().enumerate() {
             if chips <= 2 && *el != 0 as u32 {
                 b[i] -= 1;
@@ -23,5 +26,5 @@ fn solve(arr: &[u32; 3]) -> u32 {
 }
 
 fn main() {
-    println!("{:?}", solve(&[1, 1, 1]));
+    println!("{:?}", solve(&[4, 1, 1]));
 }
