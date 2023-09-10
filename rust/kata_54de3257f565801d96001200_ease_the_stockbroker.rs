@@ -1,3 +1,9 @@
+// use std::any::type_name;
+
+fn type_of<T>(_: &T) -> &'static str {
+    std::any::type_name::<T>()
+}
+
 fn balance_statement(lst: &str) -> String {
     let vs: Vec<String>;
 
@@ -15,6 +21,9 @@ fn balance_statement(lst: &str) -> String {
             .map(|x| x.to_string())
             .collect::<Vec<String>>();
         println!("ws: {:?}", vs);
+    }
+    for x in vs.iter() {
+        println!("type_of: {:?}", type_of(&x))
     }
 
     "test".to_string()
