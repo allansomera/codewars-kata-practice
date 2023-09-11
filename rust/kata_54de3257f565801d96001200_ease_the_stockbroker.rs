@@ -21,6 +21,7 @@ fn balance_statement(lst: &str) -> String {
             .map(|x| x.to_string())
             .collect::<Vec<String>>();
         println!("ws: {:?}", vs);
+        vs.iter().for_each(|x| println!("{:?}", x));
     }
     for x in vs.iter() {
         println!("type_of: {:?}", type_of(&x))
