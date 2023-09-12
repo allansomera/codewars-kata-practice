@@ -1,5 +1,6 @@
 // use std::any::type_name;
 
+use std::collections::HashMap;
 fn type_of<T>(_: &T) -> &'static str {
     std::any::type_name::<T>()
 }
@@ -23,6 +24,11 @@ fn balance_statement(lst: &str) -> String {
         println!("ws: {:?}", vs);
         vs.iter().for_each(|x| println!("{:?}", x));
     }
+
+    println!("first: {}", vs[0]);
+
+    let data: HashMap<String, HashMap<String, i32>> = HashMap::new();
+
     for x in vs.iter() {
         println!("type_of: {:?}", type_of(&x))
     }
