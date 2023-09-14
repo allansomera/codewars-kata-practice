@@ -14,9 +14,18 @@ fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>>
     } else {
         data.insert(
             String::from(&vv[0]),
-            HashMap::from([("Buy".to_string(), 1), ("Sell".to_string(), 2)]),
+            HashMap::from([
+                (
+                    "Buy".to_string(),
+                    // &vv[1].parse::<i32>().unwrap() * &vv[2].parse::<i32>().unwrap(),
+                    1,
+                ),
+                ("Sell".to_string(), 2),
+            ]),
         );
     }
+    println!("{}", vv[1]);
+    println!("{}", vv[2]);
     data
 }
 
