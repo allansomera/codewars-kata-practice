@@ -12,21 +12,30 @@ fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>>
     if multi {
         todo!()
     } else {
-        data.insert(
-            String::from(&vv[0]),
-            HashMap::from([
-                (
-                    "Buy".to_string(),
-                    // &vv[1].parse::<i32>().unwrap() * &vv[2].parse::<i32>().unwrap(),
-                    1,
-                ),
-                ("Sell".to_string(), 2),
-            ]),
-        );
+        check(vv);
+        if vv[1].parse::<i32>().is_ok() && vv[2].parse::<f64>().is_ok() {
+            data.insert(
+                String::from(&vv[0]),
+                HashMap::from([
+                    (
+                        "Buy".to_string(),
+                        vv[1].to_string().parse::<i32>().unwrap()
+                            * vv[2].to_string().parse::<f32>().unwrap() as i32,
+                        // 1,
+                    ),
+                    ("Sell".to_string(), 2),
+                ]),
+            );
+        }
     }
-    println!("{}", vv[1]);
-    println!("{}", vv[2]);
+    // println!("vv[1]: {}", vv[1]);
+    // println!("vv[2]: {}", vv[2]);
     data
+}
+
+fn check(vv: &Vec<String>) -> Vec<String> {
+    todo!()
+    // let bad_formed: Vec<String> = Vec::new();
 }
 
 fn balance_statement(lst: &str) -> String {
