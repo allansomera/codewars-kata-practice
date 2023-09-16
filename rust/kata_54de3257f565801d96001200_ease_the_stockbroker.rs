@@ -33,9 +33,16 @@ fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>>
     data
 }
 
-fn check(vv: &Vec<String>) -> Vec<String> {
-    todo!()
+fn check_order(vv: &Vec<String>) -> Vec<String> {
     // let bad_formed: Vec<String> = Vec::new();
+    let bad_order: Vec<String> = Vec::new();
+    if vv[1].parse::<f64>().is_ok() {
+        bad_order.push(vv[1]);
+    }
+
+    if vv[2].parse::<i32>().is_ok() {
+        bad_order.push(vv[2]);
+    }
 }
 
 fn balance_statement(lst: &str) -> String {
