@@ -12,7 +12,7 @@ fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>>
     if multi {
         todo!()
     } else {
-        check(vv);
+        println!("check order {:?}", check_order(vv));
         if vv[1].parse::<i32>().is_ok() && vv[2].parse::<f64>().is_ok() {
             data.insert(
                 String::from(&vv[0]),
@@ -35,14 +35,14 @@ fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>>
 
 fn check_order(vv: &Vec<String>) -> Vec<String> {
     // let bad_formed: Vec<String> = Vec::new();
-    let bad_order: Vec<String> = Vec::new();
+    let mut bad_order: Vec<String> = Vec::new();
     if vv[1].parse::<f64>().is_ok() {
-        bad_order.push(vv[1]);
+        bad_order.push(vv[1].to_owned());
     }
-
     if vv[2].parse::<i32>().is_ok() {
-        bad_order.push(vv[2]);
+        bad_order.push(vv[2].to_owned());
     }
+    bad_order
 }
 
 fn balance_statement(lst: &str) -> String {
