@@ -37,11 +37,11 @@ fn check_order(vv: &Vec<String>) -> Vec<String> {
     // let bad_formed: Vec<String> = Vec::new();
     let mut bad_order: Vec<String> = Vec::new();
     if vv[1].parse::<f64>().is_ok() {
-        bad_order.push(vv[1].to_owned());
+        bad_order = vv.clone();
     }
-    if vv[2].parse::<i32>().is_ok() {
-        bad_order.push(vv[2].to_owned());
-    }
+    // if vv[2].parse::<i32>().is_ok() {
+    //     bad_order.push(vv[2].to_owned());
+    // }
     bad_order
 }
 
@@ -76,6 +76,7 @@ fn balance_statement(lst: &str) -> String {
 
 fn main() {
     println!("{:?}", balance_statement("GOOG 300 542.0 B"));
+    // println!("{:?}", balance_statement("GOOG 542.0 300 B"));
     // println!(
     //     "{:?}",
     //     balance_statement("GOOG 300 542.0 B,GOOG 300 542.0 B")
