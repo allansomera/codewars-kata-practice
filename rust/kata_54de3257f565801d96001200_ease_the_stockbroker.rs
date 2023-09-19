@@ -12,7 +12,7 @@ fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>>
     if multi {
         todo!()
     } else {
-        println!("check order {:?}", check_order(vv));
+        println!("bad order {:?}", check_order(vv).join(" "));
         if vv[1].parse::<i32>().is_ok() && vv[2].parse::<f64>().is_ok() {
             data.insert(
                 String::from(&vv[0]),
@@ -35,14 +35,22 @@ fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>>
 
 fn check_order(vv: &Vec<String>) -> Vec<String> {
     // let bad_formed: Vec<String> = Vec::new();
-    let mut bad_order: Vec<String> = Vec::new();
-    if vv[1].parse::<f64>().is_ok() {
-        bad_order = vv.clone();
-    }
-    // if vv[2].parse::<i32>().is_ok() {
-    //     bad_order.push(vv[2].to_owned());
+
+    // let mut bad_order: Vec<String> = Vec::new();
+    // if vv[1].parse::<f64>().is_ok() {
+    //     bad_order = vv.clone();
     // }
-    bad_order
+    println!(
+        "vv[1]_check_float => {:?}: {:?}",
+        vv[1],
+        vv[1].parse::<i32>().is_ok()
+    );
+
+    //if vv[1] == "300.0" will fail
+    if !vv[1].parse::<i32>().is_ok() {
+        return vv.clone();
+    }
+    vv.clone()
 }
 
 fn balance_statement(lst: &str) -> String {
@@ -75,7 +83,8 @@ fn balance_statement(lst: &str) -> String {
 }
 
 fn main() {
-    println!("{:?}", balance_statement("GOOG 300 542.0 B"));
+    // println!("{:?}", balance_statement("GOOG 300 542.0 B"));
+    println!("{:?}", balance_statement("GOOG 542.0 300 B"));
     // println!("{:?}", balance_statement("GOOG 542.0 300 B"));
     // println!(
     //     "{:?}",
