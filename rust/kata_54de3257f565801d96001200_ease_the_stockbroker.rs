@@ -9,22 +9,31 @@ fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>>
     let mut data: HashMap<String, HashMap<String, i32>> = HashMap::new();
     // let stock_info: HashMap<String, i32> = HashMap::new();
 
+    // ("GOOG 300 542.0 B"));
+
     if multi {
         todo!()
     } else {
         println!("bad order {:?}", check_order(vv).join(" "));
+        println!("{:?}", vv[3]);
         if vv[1].parse::<i32>().is_ok() && vv[2].parse::<f64>().is_ok() {
+            // let mut status = match vv[3].to_owned {
+            //     "B".to_string() => "Buy".to_string(),
+            //     "S".to_string() => "Sell".to_string(),
+            //     _ => (),
+            // };
+            let status = "Buy".to_string();
+            let quantity = vv[1].clone();
+            let price = vv[2].clone();
+
             data.insert(
                 String::from(&vv[0]),
-                HashMap::from([
-                    (
-                        "Buy".to_string(),
-                        vv[1].to_string().parse::<i32>().unwrap()
-                            * vv[2].to_string().parse::<f32>().unwrap() as i32,
-                        // 1,
-                    ),
-                    ("Sell".to_string(), 2),
-                ]),
+                HashMap::from([(
+                    status,
+                    vv[1].to_string().parse::<i32>().unwrap()
+                        * vv[2].to_string().parse::<f32>().unwrap() as i32,
+                    // 1,
+                )]),
             );
         }
     }
@@ -70,7 +79,7 @@ fn balance_statement(lst: &str) -> String {
             .map(|x| x.to_string())
             .collect::<Vec<String>>();
         println!("ws: {:?}", vs);
-        vs.iter().for_each(|x| println!("{:?}", x));
+        // vs.iter().for_each(|x| println!("{:?}", x));
     }
 
     // println!("first: {}", vs[0]);
