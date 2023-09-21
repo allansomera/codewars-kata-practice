@@ -17,11 +17,11 @@ fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>>
         println!("bad order {:?}", check_order(vv).join(" "));
         println!("{:?}", vv[3]);
         if vv[1].parse::<i32>().is_ok() && vv[2].parse::<f64>().is_ok() {
-            // let mut status = match vv[3].to_owned {
-            //     "B".to_string() => "Buy".to_string(),
-            //     "S".to_string() => "Sell".to_string(),
-            //     _ => (),
-            // };
+            let status = match vv[3].as_ref() {
+                "B" => "Buy".to_string(),
+                "S" => "Sell".to_string(),
+                _ => "".to_string(),
+            };
             let status = "Buy".to_string();
             let quantity = vv[1].clone();
             let price = vv[2].clone();
