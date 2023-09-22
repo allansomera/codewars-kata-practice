@@ -14,14 +14,14 @@ fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>>
     if multi {
         todo!()
     } else {
+        let status = match vv[3].as_ref() {
+            "B" => "Buy".to_string(),
+            "S" => "Sell".to_string(),
+            _ => "".to_string(),
+        };
         println!("bad order {:?}", check_order(vv).join(" "));
         println!("{:?}", vv[3]);
         if vv[1].parse::<i32>().is_ok() && vv[2].parse::<f64>().is_ok() {
-            let status = match vv[3].as_ref() {
-                "B" => "Buy".to_string(),
-                "S" => "Sell".to_string(),
-                _ => "".to_string(),
-            };
             let status = "Buy".to_string();
             let quantity = vv[1].clone();
             let price = vv[2].clone();
@@ -34,6 +34,11 @@ fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>>
                         * vv[2].to_string().parse::<f32>().unwrap() as i32,
                     // 1,
                 )]),
+            );
+        } else {
+            data.insert(
+                String::from(&vv[0]),
+                HashMap::from([("Buy".to_string(), 0), ("Sell".to_string(), 0)]),
             );
         }
     }
@@ -87,7 +92,7 @@ fn balance_statement(lst: &str) -> String {
     // for x in vs.iter() {
     //     println!("type_of: {:?}", type_of(&x))
     // }
-    println!("{:?}", build(&vs, false));
+    println!("build {:?}", build(&vs, false));
     "test".to_string()
 }
 
