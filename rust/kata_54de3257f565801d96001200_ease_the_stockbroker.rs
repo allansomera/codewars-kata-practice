@@ -12,7 +12,21 @@ fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>>
     // ("GOOG 300 542.0 B"));
 
     if multi {
-        todo!()
+        println!("multi => {:?}", vv);
+        for i in vv.into_iter() {
+            let tmp_vv: Vec<String> = i
+                .trim()
+                .split_whitespace()
+                .into_iter()
+                .map(|x| x.to_string())
+                .collect::<Vec<String>>();
+            println!("tmp_vv {:?}", tmp_vv)
+            // check_order(i)
+            // println!(
+            //     "bad order {:?}",
+            //     check_order(i.trim().to_string()).join(" ")
+            // );
+        }
     } else {
         let status = match vv[3].as_ref() {
             "B" => "Buy".to_string(),
@@ -70,6 +84,7 @@ fn check_order(vv: &Vec<String>) -> Vec<String> {
 fn balance_statement(lst: &str) -> String {
     let vs: Vec<String>;
 
+    //multi
     if lst.contains(",") {
         vs = lst
             .split(",")
@@ -77,13 +92,16 @@ fn balance_statement(lst: &str) -> String {
             .map(|x| x.to_string())
             .collect::<Vec<String>>();
         println!("comma: {:?}", vs);
+        println!("build {:?}", build(&vs, true));
     } else {
+        //non-multi
         vs = lst
             .split_whitespace()
             .into_iter()
             .map(|x| x.to_string())
             .collect::<Vec<String>>();
         println!("ws: {:?}", vs);
+        println!("build {:?}", build(&vs, false));
         // vs.iter().for_each(|x| println!("{:?}", x));
     }
 
@@ -97,8 +115,11 @@ fn balance_statement(lst: &str) -> String {
 }
 
 fn main() {
-    // println!("{:?}", balance_statement("GOOG 300 542.0 B"));
-    println!("{:?}", balance_statement("GOOG 542.0 300 B"));
+    println!(
+        "{:?}",
+        balance_statement("GOOG 300 542.0 B, GOOG 3000 542.0 S")
+    );
+    // println!("{:?}", balance_statement("GOOG 542.0 300 B"));
     // println!("{:?}", balance_statement("GOOG 542.0 300 B"));
     // println!(
     //     "{:?}",
