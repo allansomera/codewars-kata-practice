@@ -20,7 +20,9 @@ fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>>
                 .into_iter()
                 .map(|x| x.to_string())
                 .collect::<Vec<String>>();
-            println!("tmp_vv {:?}", tmp_vv)
+            println!("tmp_vv {:?}", tmp_vv);
+            println!("check_order() {:?}", check_order(&tmp_vv).join(" "));
+
             // check_order(i)
             // println!(
             //     "bad order {:?}",
