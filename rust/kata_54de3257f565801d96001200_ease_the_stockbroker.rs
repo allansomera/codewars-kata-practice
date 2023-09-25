@@ -12,7 +12,7 @@ fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>>
     // ("GOOG 300 542.0 B"));
 
     if multi {
-        println!("multi => {:?}", vv);
+        println!("multi({}) => {:?}", multi, vv);
         for i in vv.into_iter() {
             let tmp_vv: Vec<String> = i
                 .trim()
@@ -30,6 +30,7 @@ fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>>
             // );
         }
     } else {
+        println!("multi ({})", multi.to_string());
         let status = match vv[3].as_ref() {
             "B" => "Buy".to_string(),
             "S" => "Sell".to_string(),
@@ -78,6 +79,7 @@ fn check_order(vv: &Vec<String>) -> Vec<String> {
 
     //if vv[1] == "300.0" will fail
     if !vv[1].parse::<i32>().is_ok() {
+        println!("{:?} is a float", vv[1]);
         return vv.clone();
     }
     vv.clone()
@@ -112,14 +114,14 @@ fn balance_statement(lst: &str) -> String {
     // for x in vs.iter() {
     //     println!("type_of: {:?}", type_of(&x))
     // }
-    println!("build {:?}", build(&vs, false));
+    // println!("build {:?}", build(&vs, false));
     "test".to_string()
 }
 
 fn main() {
     println!(
         "{:?}",
-        balance_statement("GOOG 300 542.0 B, GOOG 3000 542.0 S")
+        balance_statement("GOOG 542.0 300 B, GOOG 3000 542.0 S")
     );
     // println!("{:?}", balance_statement("GOOG 542.0 300 B"));
     // println!("{:?}", balance_statement("GOOG 542.0 300 B"));
