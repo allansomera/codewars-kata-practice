@@ -4,6 +4,7 @@ use std::collections::HashMap;
 // fn type_of<T>(_: &T) -> &'static str {
 //     std::any::type_name::<T>()
 // }
+type Result<T> = std::result::Result<T, Box<dyn error::Error>>;
 
 fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>> {
     let mut data: HashMap<String, HashMap<String, i32>> = HashMap::new();
@@ -64,7 +65,7 @@ fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>>
     data
 }
 
-fn check_order(vv: &Vec<String>) -> Vec<String> {
+fn check_order(vv: &Vec<String>) -> Result<String> {
     // let bad_formed: Vec<String> = Vec::new();
 
     // let mut bad_order: Vec<String> = Vec::new();
