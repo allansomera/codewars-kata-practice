@@ -4,7 +4,9 @@ use std::collections::HashMap;
 // fn type_of<T>(_: &T) -> &'static str {
 //     std::any::type_name::<T>()
 // }
-type Result<T> = std::result::Result<T, Box<dyn error::Error>>;
+// use std::error;
+//
+// type Result<T> = std::result::Result<T, Box<dyn error::Error>>;
 
 fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>> {
     let mut data: HashMap<String, HashMap<String, i32>> = HashMap::new();
@@ -22,7 +24,7 @@ fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>>
                 .map(|x| x.to_string())
                 .collect::<Vec<String>>();
             println!("tmp_vv {:?}", tmp_vv);
-            println!("check_order() {:?}", check_order(&tmp_vv).join(" "));
+            // println!("check_order() {:?}", check_order(&tmp_vv).join(" "));
 
             // check_order(i)
             // println!(
@@ -37,7 +39,7 @@ fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>>
             "S" => "Sell".to_string(),
             _ => "".to_string(),
         };
-        println!("bad order {:?}", check_order(vv).join(" "));
+        // println!("bad order {:?}", check_order(vv).join(" "));
         println!("{:?}", vv[3]);
         if vv[1].parse::<i32>().is_ok() && vv[2].parse::<f64>().is_ok() {
             let status = "Buy".to_string();
@@ -65,7 +67,7 @@ fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>>
     data
 }
 
-fn check_order(vv: &Vec<String>) -> Result<String> {
+fn check_order(vv: &Vec<String>) -> Result<Vec<String>, Vec<String>> {
     // let bad_formed: Vec<String> = Vec::new();
 
     // let mut bad_order: Vec<String> = Vec::new();
@@ -81,9 +83,10 @@ fn check_order(vv: &Vec<String>) -> Result<String> {
     //if vv[1] == "300.0" will fail
     if !vv[1].parse::<i32>().is_ok() {
         println!("{:?} is a float", vv[1]);
-        return vv.clone();
+        return Err(vv.clone());
+    } else {
+        Ok(vv.clone())
     }
-    vv.clone()
 }
 
 fn balance_statement(lst: &str) -> String {
