@@ -31,7 +31,13 @@ fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>>
             //     "bad order {:?}",
             //     check_order(i.trim().to_string()).join(" ")
             // );
-            println!("check_order: {:?}", check_order(&tmp_vv).unwrap());
+            // println!("check_order: {:?}", check_order(&tmp_vv));
+            let val = match check_order(&tmp_vv) {
+                Ok(o) => o,
+                Err(e) => e,
+            };
+            // let val = check_order(&tmp_vv)?;
+            println!("val: {:?}", val);
         }
     } else {
         println!("multi ({})", multi.to_string());
