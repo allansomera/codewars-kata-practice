@@ -10,6 +10,7 @@ use std::collections::HashMap;
 
 fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>> {
     let mut data: HashMap<String, HashMap<String, i32>> = HashMap::new();
+    let bad_order: String;
     // let stock_info: HashMap<String, i32> = HashMap::new();
 
     // ("GOOG 300 542.0 B"));
@@ -33,7 +34,15 @@ fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>>
             // );
             // println!("check_order: {:?}", check_order(&tmp_vv));
             let val = match check_order(&tmp_vv) {
-                Ok(o) => o,
+                Ok(o) => {
+                    let status = match o[0].as_ref() {
+                        "B" => "Buy".to_string(),
+                        "S" => "Sell".to_string(),
+                        &_ => "".to_string(),
+                    };
+                    // data.insert(String::from(o[0]), )
+                    o
+                }
                 Err(e) => e,
             };
             // let val = check_order(&tmp_vv)?;
@@ -92,7 +101,7 @@ fn check_order(vv: &Vec<String>) -> Result<Vec<String>, Vec<String>> {
         println!("{:?} is a float", vv[1]);
         return Err(vv.clone());
     } else {
-        Ok(vv.clone())
+        return Ok(vv.clone());
     }
 }
 
