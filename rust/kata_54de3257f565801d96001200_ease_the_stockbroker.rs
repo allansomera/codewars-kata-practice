@@ -35,18 +35,27 @@ fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>>
             // println!("check_order: {:?}", check_order(&tmp_vv));
             let val = match check_order(&tmp_vv) {
                 Ok(o) => {
-                    let status = match o[0].as_ref() {
+                    let status = match o[3].as_ref() {
                         "B" => "Buy".to_string(),
                         "S" => "Sell".to_string(),
                         &_ => "".to_string(),
                     };
-                    // data.insert(String::from(o[0]), )
+                    println!("status {:?}", status);
+                    data.insert(
+                        String::from(&o[0]),
+                        HashMap::from([(
+                            status,
+                            o[1].to_string().parse::<i32>().unwrap()
+                                * o[2].to_string().parse::<f32>().unwrap() as i32,
+                        )]),
+                    );
                     o
                 }
                 Err(e) => e,
             };
             // let val = check_order(&tmp_vv)?;
             println!("val: {:?}", val);
+            println!("val - type : {:?}", check_order(&tmp_vv));
         }
     } else {
         println!("multi ({})", multi.to_string());
@@ -80,6 +89,7 @@ fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>>
     }
     // println!("vv[1]: {}", vv[1]);
     // println!("vv[2]: {}", vv[2]);
+    println!("data {:?}", data);
     data
 }
 
@@ -139,14 +149,14 @@ fn balance_statement(lst: &str) -> String {
 }
 
 fn main() {
-    println!(
-        "{:?}",
-        balance_statement("GOOG 542.0 300 B, GOOG 3000 542.0 S")
-    );
-    // println!("{:?}", balance_statement("GOOG 542.0 300 B"));
-    // println!("{:?}", balance_statement("GOOG 542.0 300 B"));
     // println!(
     //     "{:?}",
-    //     balance_statement("GOOG 300 542.0 B,GOOG 300 542.0 B")
+    //     balance_statement("GOOG 542.0 300 B, GOOG 3000 542.0 S")
     // );
+    // println!("{:?}", balance_statement("GOOG 542.0 300 B"));
+    // println!("{:?}", balance_statement("GOOG 542.0 300 B"));
+    println!(
+        "{:?}",
+        balance_statement("GOOG 300 542.0 B,GOOG 200 542.0 S")
+    );
 }
