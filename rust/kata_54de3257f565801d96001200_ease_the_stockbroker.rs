@@ -1,6 +1,6 @@
 // use std::any::type_name;
 
-use std::collections::HashMap;
+use std::collections::{HashMap, VecDeque};
 // fn type_of<T>(_: &T) -> &'static str {
 //     std::any::type_name::<T>()
 // }
@@ -11,6 +11,7 @@ use std::collections::HashMap;
 fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>> {
     let mut data: HashMap<String, HashMap<String, i32>> = HashMap::new();
     let bad_order: String;
+    let buy_sell: VecDeque<String, i32> = VecDeque::new();
     // let stock_info: HashMap<String, i32> = HashMap::new();
 
     // ("GOOG 300 542.0 B"));
