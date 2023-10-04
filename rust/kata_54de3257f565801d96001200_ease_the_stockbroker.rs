@@ -43,7 +43,8 @@ fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>>
                     };
                     println!("status {:?}", status);
                     let v_buysell: Vec<(String, i32)> = Vec::new();
-                    v_buysell.insert((status, 0));
+                    println!("{:?}", data.contains_key(&vv[0]));
+                    // v_buysell.insert((status, 0));
                     data.insert(
                         String::from(&o[0]),
                         HashMap::from([(
