@@ -10,7 +10,7 @@ use std::collections::{HashMap, VecDeque};
 
 fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>> {
     let mut data: HashMap<String, HashMap<String, i32>> = HashMap::new();
-    let bad_order: String;
+    let mut bad_order: String;
     let buy_sell: Vec<Vec<(String, i32)>> = Vec::new();
     // let stock_info: HashMap<String, i32> = HashMap::new();
 
@@ -55,7 +55,11 @@ fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>>
                     );
                     o
                 }
-                Err(e) => e,
+                // Err(e) => e,
+                Err(e) => {
+                    bad_order = String::from(e.clone().into_iter().collect::<Vec<_>>().join(" "));
+                    e
+                }
             };
             // let val = check_order(&tmp_vv)?;
             println!("val: {:?}", val);
