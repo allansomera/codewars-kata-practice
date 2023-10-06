@@ -1,5 +1,6 @@
 // use std::any::type_name;
 
+use std::collections::hash_map::Entry::{Occupied, Vacant};
 use std::collections::{HashMap, VecDeque};
 // fn type_of<T>(_: &T) -> &'static str {
 //     std::any::type_name::<T>()
@@ -43,16 +44,36 @@ fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>>
                     };
                     println!("status {:?}", status);
                     let v_buysell: Vec<(String, i32)> = Vec::new();
-                    println!("{:?}", data.contains_key(&vv[0]));
+                    println!("contains_key {:?}", data.contains_key(&vv[0]));
                     // v_buysell.insert((status, 0));
-                    data.insert(
-                        String::from(&o[0]),
-                        HashMap::from([(
-                            status,
-                            o[1].to_string().parse::<i32>().unwrap()
-                                * o[2].to_string().parse::<f32>().unwrap() as i32,
-                        )]),
-                    );
+                    // data.insert(
+                    //     String::from(&o[0]),
+                    //     HashMap::from([(
+                    //         status,
+                    //         o[1].to_string().parse::<i32>().unwrap()
+                    //             * o[2].to_string().parse::<f32>().unwrap() as i32,
+                    //     )]),
+                    // );
+                    let result = match data.entry(vv[0]) {
+                        Occupied(v) => {
+                            let value = v.get();
+                            Err(value)
+                            // HashMap::from([(
+                            //     status,
+                            //     o[1].to_string().parse::<i32>().unwrap()
+                            //         * o[2].to_string().parse::<f32>().unwrap() as i32,
+                            // )]),
+                        }
+                        Vacant(n) => {
+                            n.insert(HashMap::from([(
+                                status,
+                                o[1].to_string().parse::<i32>().unwrap()
+                                    * o[2].to_string().parse::<f32>().unwrap() as i32,
+                            )]));
+                            Ok(())
+                        }
+                    };
+                    println!("result {:?}", result);
                     o
                 }
                 // Err(e) => e,
