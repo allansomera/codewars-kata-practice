@@ -54,9 +54,10 @@ fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>>
                     //             * o[2].to_string().parse::<f32>().unwrap() as i32,
                     //     )]),
                     // );
-                    let result = match data.entry(vv[0]) {
+                    let result = match data.entry(vv[0].clone()) {
                         Occupied(v) => {
-                            let value = v.get();
+                            let value = v.get().clone();
+                            println!("Occupied {:?}", value);
                             Err(value)
                             // HashMap::from([(
                             //     status,
