@@ -1,24 +1,28 @@
 // use std::any::type_name;
 
 use std::collections::hash_map::Entry::{Occupied, Vacant};
-use std::collections::{HashMap, VecDeque};
+use std::collections::HashMap;
 // fn type_of<T>(_: &T) -> &'static str {
 //     std::any::type_name::<T>()
 // }
 // use std::error;
 //
 // type Result<T> = std::result::Result<T, Box<dyn error::Error>>;
+// fn print_type_of<T>(_: &T) {
+//     println!("{}", std::any::type_name::<T>())
+// }
 
-fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>> {
+fn build(vv: &Vec<String>, multi: bool) -> (HashMap<String, HashMap<String, i32>>, String) {
     let mut data: HashMap<String, HashMap<String, i32>> = HashMap::new();
-    let mut bad_order: String;
-    let buy_sell: Vec<Vec<(String, i32)>> = Vec::new();
+    let mut bad_order: String = String::new();
+    // let buy_sell: Vec<Vec<(String, i32)>> = Vec::new();
     // let stock_info: HashMap<String, i32> = HashMap::new();
 
     // ("GOOG 300 542.0 B"));
 
     if multi {
         println!("multi({}) => {:?}", multi, vv);
+        println!("inside for: {}", "\n=====\n");
         for i in vv.into_iter() {
             let tmp_vv: Vec<String> = i
                 .trim()
@@ -35,15 +39,16 @@ fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>>
             //     check_order(i.trim().to_string()).join(" ")
             // );
             // println!("check_order: {:?}", check_order(&tmp_vv));
-            let val = match check_order(&tmp_vv) {
-                Ok(o) => {
-                    let status = match o[3].as_ref() {
+            let build_data = match check_order(&tmp_vv) {
+                //build data
+                Ok(o_data) => {
+                    let status = match o_data[3].as_ref() {
                         "B" => "Buy".to_string(),
                         "S" => "Sell".to_string(),
                         &_ => "".to_string(),
                     };
                     println!("status {:?}", status);
-                    let v_buysell: Vec<(String, i32)> = Vec::new();
+                    // let v_buysell: Vec<(String, i32)> = Vec::new();
                     println!("contains_key {:?}", data.contains_key(&vv[0]));
                     // v_buysell.insert((status, 0));
                     // data.insert(
@@ -54,28 +59,114 @@ fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>>
                     //             * o[2].to_string().parse::<f32>().unwrap() as i32,
                     //     )]),
                     // );
-                    let result = match data.entry(vv[0].clone()) {
-                        Occupied(v) => {
-                            let value = v.get().clone();
-                            println!("Occupied {:?}", value);
-                            Err(value)
+                    let result = match data.entry(o_data[0].clone()) {
+                        // check for stock name like GOOG if it exist
+                        Vacant(new_stock_name) => {
+                            println!("{}", "new_stock_name vacant".to_string());
+                            // let stock_key = new_stock_name.get().clone();
+                            // n.insert(HashMap::from([(
+                            //     status,
+                            //     o[1].to_string().parse::<i32>().unwrap()
+                            //         * o[2].to_string().parse::<f32>().unwrap() as i32,
+                            // )]));
+                            // n.insert(HashMap::from([(
+                            //     status,
+                            //     o_data[1].to_string().parse::<i32>().unwrap()
+                            //         * o_data[2].to_string().parse::<f32>().unwrap() as i32,
+                            // )]));
+                            let mut buy_sell: HashMap<String, i32> = HashMap::new();
+
+                            // since the hashmap has the structure {GOOG: {Buy: 23123, Sell: 123123}}
+                            // grab the status and insert a new hashmap
+                            buy_sell.insert(
+                                status.clone(),
+                                o_data[1].to_string().parse::<i32>().unwrap()
+                                    * o_data[2].to_string().parse::<f32>().unwrap() as i32,
+                            );
+                            new_stock_name.insert(buy_sell.clone());
+                            Ok(())
+                        }
+                        // GOOG stock name exist
+                        Occupied(mut occ) => {
+                            //occ the value of what {GOOG: {}} is holding
+                            let mut bs_status = occ.get().clone();
+                            // print_type_of(&bs_status);
+                            // let occ_keys = occ.key();
+                            // println!("occ_keys{:?}", occ_keys);
+
+                            //check if key 'Buy' or 'Sell' exists
+                            match bs_status.entry(status.clone()) {
+                                //if they key doesnt exist
+                                Vacant(v_buysell) => {
+                                    println!("v_buysell: {:?}", v_buysell);
+                                    // let bs: HashMap<String, i32> = HashMap::new();
+                                    //insert new value => shares * price
+                                    v_buysell.insert(
+                                        o_data[1].to_string().parse::<i32>().unwrap()
+                                            * o_data[2].to_string().parse::<f32>().unwrap() as i32,
+                                    );
+                                    // println!("v_buysell=>after: {:?}", v_buysell);
+                                    // occ.insert(bs.clone());
+                                    // println!("occ: {:?}", occ)
+                                }
+                                //if key 'Buy' or 'Sell' exists
+                                Occupied(mut buysell_exist) => {
+                                    // let prev = occ.get(status);
+                                    // let prev = occ.get(status.clone());
+
+                                    //get previous value {Buy: 123} => prev_val == 123
+                                    let prev_val = buysell_exist.get();
+                                    // let prev_key = buysell_exist.key();
+
+                                    //add new value => share * price + prev_val
+                                    buysell_exist.insert(
+                                        o_data[1].to_string().parse::<i32>().unwrap()
+                                            * o_data[2].to_string().parse::<f32>().unwrap() as i32
+                                            + prev_val,
+                                    );
+                                    // println!("prev: {:?}", prev);
+                                    // buysell_exist
+                                    // occ.get_mut().insert(status.clone(),
+                                    //
+                                    //                      )
+                                }
+                            }
+                            println!("bs_status: {:?}", bs_status);
+                            // occ.get_mut().insert(
+                            //     status.clone(),
+                            //     o_data[1].to_string().parse::<i32>().unwrap()
+                            //         * o_data[2].to_string().parse::<f32>().unwrap() as i32,
+                            // );
+
+                            //bs_status will hold the new added/updated HashMap of {Buy/Sell: value}
+                            occ.insert(bs_status.clone());
+                            Err(())
+                            // println!("Occupied {:?}", value);
+                            // let mut buy_or_sell;
+                            // let prev;
+                            // if it exist check for Buy or Sell and update
+                            // if let Some(key) = stock_key.keys().next() {
+                            //     buy_or_sell = key.clone();
+                            //     prev = stock_key.get(&buy_or_sell);
+                            //     println!("value: {:?}", prev.unwrap());
+                            //
+                            //     // stock_name.insert(HashMap::from([(
+                            //     //     buy_or_sell,
+                            //     //     o[1].to_string().parse::<i32>().unwrap()
+                            //     //         * o[2].to_string().parse::<f32>().unwrap() as i32
+                            //     //         + prev.unwrap(),
+                            //     // )]));
+                            //     // println!("v: {:?}", v)
+                            // }
                             // HashMap::from([(
                             //     status,
                             //     o[1].to_string().parse::<i32>().unwrap()
                             //         * o[2].to_string().parse::<f32>().unwrap() as i32,
                             // )]),
                         }
-                        Vacant(n) => {
-                            n.insert(HashMap::from([(
-                                status,
-                                o[1].to_string().parse::<i32>().unwrap()
-                                    * o[2].to_string().parse::<f32>().unwrap() as i32,
-                            )]));
-                            Ok(())
-                        }
-                    };
+                    }; //result
                     println!("result {:?}", result);
-                    o
+                    o_data
                 }
                 // Err(e) => e,
                 Err(e) => {
@@ -84,10 +175,15 @@ fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>>
                 }
             };
             // let val = check_order(&tmp_vv)?;
-            println!("val: {:?}", val);
+            println!("build_data: {:?}", build_data);
             println!("val - type : {:?}", check_order(&tmp_vv));
+            println!(
+                "{}",
+                "\n+++++++++++++++++++++++++++++++++++++++++\n".to_string()
+            );
         }
     } else {
+        //multi is false
         println!("multi ({})", multi.to_string());
         let status = match vv[3].as_ref() {
             "B" => "Buy".to_string(),
@@ -119,8 +215,8 @@ fn build(vv: &Vec<String>, multi: bool) -> HashMap<String, HashMap<String, i32>>
     }
     // println!("vv[1]: {}", vv[1]);
     // println!("vv[2]: {}", vv[2]);
-    println!("data {:?}", data);
-    data
+    // println!("data {:?}", data);
+    (data, bad_order)
 }
 
 fn check_order(vv: &Vec<String>) -> Result<Vec<String>, Vec<String>> {
@@ -156,7 +252,10 @@ fn balance_statement(lst: &str) -> String {
             .map(|x| x.to_string())
             .collect::<Vec<String>>();
         println!("comma: {:?}", vs);
-        println!("build {:?}", build(&vs, true));
+        // println!("build {:?}", build(&vs, true));
+        let (good_orders, bad_orders) = build(&vs, true);
+        println!("good_orders: {:?}", good_orders);
+        println!("bad_orders: {:?}", bad_orders);
     } else {
         //non-multi
         vs = lst
@@ -187,6 +286,8 @@ fn main() {
     // println!("{:?}", balance_statement("GOOG 542.0 300 B"));
     println!(
         "{:?}",
-        balance_statement("GOOG 300 542.0 B,GOOG 200 542.0 S")
+        balance_statement(
+            "GOOG 1 10.0 B,GOOG 1 10.0 B,GOOG 1 10.0 B,GOOG 1 10.0 S, APPL 10.0 1 B, APPL 2 10.0 B"
+        )
     );
 }
