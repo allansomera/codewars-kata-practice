@@ -12,9 +12,10 @@ use std::collections::HashMap;
 //     println!("{}", std::any::type_name::<T>())
 // }
 
-fn build(vv: &Vec<String>, multi: bool) -> (HashMap<String, HashMap<String, i32>>, String) {
+fn build(vv: &Vec<String>, multi: bool) -> (HashMap<String, HashMap<String, i32>>, Vec<String>) {
     let mut data: HashMap<String, HashMap<String, i32>> = HashMap::new();
-    let mut bad_order: String = String::new();
+    // let mut bad_order: String = String::new();
+    let mut bad_orders: Vec<String> = Vec::new();
     // let buy_sell: Vec<Vec<(String, i32)>> = Vec::new();
     // let stock_info: HashMap<String, i32> = HashMap::new();
 
@@ -170,7 +171,10 @@ fn build(vv: &Vec<String>, multi: bool) -> (HashMap<String, HashMap<String, i32>
                 }
                 // Err(e) => e,
                 Err(e) => {
-                    bad_order = String::from(e.clone().into_iter().collect::<Vec<_>>().join(" "));
+                    println!("bad_order: {:?}", e);
+                    let bad_order =
+                        String::from(e.clone().into_iter().collect::<Vec<_>>().join(" "));
+                    bad_orders.push(bad_order.clone());
                     e
                 }
             };
@@ -216,7 +220,24 @@ fn build(vv: &Vec<String>, multi: bool) -> (HashMap<String, HashMap<String, i32>
     // println!("vv[1]: {}", vv[1]);
     // println!("vv[2]: {}", vv[2]);
     // println!("data {:?}", data);
-    (data, bad_order)
+    for (key, value) in &mut data {
+        // println!("[BEFORE] Key: {}, Value: {:?}", key, value);
+        // println!("Value_keys => {:?}", value.keys());
+
+        if value.keys().len() == 1 {
+            let temp_status = value.keys().next().unwrap();
+            match temp_status.as_ref() {
+                "Buy" => value.insert("Sell".to_string(), 0),
+                "Sell" => value.insert("Buy".to_string(), 0),
+                &_ => None,
+            };
+            // println!("temp_status {:?}", temp_status);
+        }
+
+        // value.insert("test".to_string(), 1);
+        println!("[AFTER] Key: {}, Value: {:?}", key, value);
+    }
+    (data, bad_orders)
 }
 
 fn check_order(vv: &Vec<String>) -> Result<Vec<String>, Vec<String>> {
@@ -256,6 +277,38 @@ fn balance_statement(lst: &str) -> String {
         let (good_orders, bad_orders) = build(&vs, true);
         println!("good_orders: {:?}", good_orders);
         println!("bad_orders: {:?}", bad_orders);
+        println!("Badly formed {}", bad_orders.len());
+        let mut final_statement: String = String::new();
+        let mut buy = 0;
+        let mut sell = 0;
+        for (key, value) in &good_orders {
+            for (v_key, v_val) in value {
+                println!("v_key: {:?}, v_val: {:?}", v_key, v_val);
+                match v_key.as_ref() {
+                    "Buy" => buy += v_val,
+                    "Sell" => sell += v_val,
+                    &_ => (),
+                }
+            }
+            // println!("Key: {:?}, Value: {:?}", key, value)
+        }
+        let bad_orders_string = bad_orders
+            .clone()
+            .into_iter()
+            .map(|x| x.to_string())
+            .collect::<Vec<String>>()
+            .join(" ;");
+
+        final_statement = format!(
+            "Buy : {} Sell: {}; Badly formed {}: {} ;",
+            buy,
+            sell,
+            bad_orders.len(),
+            bad_orders_string
+        );
+        println!("buy: {}", buy);
+        println!("sell: {}", sell);
+        return final_statement;
     } else {
         //non-multi
         vs = lst
@@ -287,7 +340,7 @@ fn main() {
     println!(
         "{:?}",
         balance_statement(
-            "GOOG 1 10.0 B,GOOG 1 10.0 B,GOOG 1 10.0 B,GOOG 1 10.0 S, APPL 10.0 1 B, APPL 2 10.0 B"
+            "GOOG 1 10.0 B,GOOG 1 10.0 B,GOOG 1 10.0 B,GOOG 1 10.0 S, APPL 10.0 1 B, APPL 10.0 1 B, APPL 2 10.0 B"
         )
     );
 }
