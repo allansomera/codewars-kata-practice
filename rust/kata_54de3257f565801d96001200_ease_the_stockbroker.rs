@@ -339,8 +339,11 @@ fn main() {
     // println!("{:?}", balance_statement("GOOG 542.0 300 B"));
     println!(
         "{:?}",
+        // balance_statement(
+        //     "GOOG 1 10.0 B,GOOG 1 10.0 B,GOOG 1 10.0 B,GOOG 1 10.0 S, APPL 10.0 1 B, APPL 10.0 1 B, APPL 2 10.0 B"
+        // )
         balance_statement(
-            "GOOG 1 10.0 B,GOOG 1 10.0 B,GOOG 1 10.0 B,GOOG 1 10.0 S, APPL 10.0 1 B, APPL 10.0 1 B, APPL 2 10.0 B"
+            "ZNGA 1300 2.66 B, CLH15.NYM 50 56.32 B, OWW 1000 11.623 B, OGG 20 580.1 B"
         )
     );
 }
