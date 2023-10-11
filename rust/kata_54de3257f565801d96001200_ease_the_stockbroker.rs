@@ -188,54 +188,138 @@ fn build(vv: &Vec<String>, multi: bool) -> (HashMap<String, HashMap<String, i32>
         }
     } else {
         //multi is false
+
         println!("multi ({})", multi.to_string());
-        let status = match vv[3].as_ref() {
-            "B" => "Buy".to_string(),
-            "S" => "Sell".to_string(),
-            _ => "".to_string(),
+        // let status = match vv[3].as_ref() {
+        //     "B" => "Buy".to_string(),
+        //     "S" => "Sell".to_string(),
+        //     _ => "".to_string(),
+        // };
+        // // println!("bad order {:?}", check_order(vv).join(" "));
+        // println!("{:?}", vv[3]);
+        // if vv[1].parse::<i32>().is_ok() && vv[2].parse::<f64>().is_ok() {
+        //     let status = "Buy".to_string();
+        //     let quantity = vv[1].clone();
+        //     let price = vv[2].clone();
+        //
+        //     data.insert(
+        //         String::from(&vv[0]),
+        //         HashMap::from([(
+        //             status,
+        //             vv[1].to_string().parse::<i32>().unwrap()
+        //                 * vv[2].to_string().parse::<f32>().unwrap() as i32,
+        //             // 1,
+        //         )]),
+        //     );
+        // } else {
+        //     data.insert(
+        //         String::from(&vv[0]),
+        //         HashMap::from([("Buy".to_string(), 0), ("Sell".to_string(), 0)]),
+        //     );
+        // }
+
+        // check if correct format
+        // let tmp_vv_single: Vec<String> = vv
+        //     .clone()
+        //     .split_whitespace()
+        //     .into_iter()
+        //     .map(|x| x.to_string())
+        //     .collect::<Vec<String>>();
+        // println!("tmp_vv_single => {:?}", tmp_vv_single);
+        println!("vv => {:?}", vv);
+        let build_data = match check_order(&vv) {
+            Ok(o_data_s) => {
+                let status = match o_data_s[3].as_ref() {
+                    "B" => "Buy".to_string(),
+                    "S" => "Sell".to_string(),
+                    &_ => "".to_string(),
+                };
+
+                let result = match data.entry(o_data_s[0].clone()) {
+                    // check for stock name like GOOG if it exist
+                    Vacant(new_stock_name) => {
+                        println!("{}", "new_stock_name vacant".to_string());
+                        let mut buy_sell: HashMap<String, i32> = HashMap::new();
+
+                        // since the hashmap has the structure {GOOG: {Buy: 23123, Sell: 123123}}
+                        // grab the status and insert a new hashmap
+                        buy_sell.insert(
+                            status.clone(),
+                            o_data_s[1].to_string().parse::<i32>().unwrap()
+                                * o_data_s[2].to_string().parse::<f32>().unwrap() as i32,
+                        );
+                        new_stock_name.insert(buy_sell.clone());
+                        Ok(())
+                    }
+                    // GOOG stock name exist
+                    Occupied(mut occ) => {
+                        //occ the value of what {GOOG: {}} is holding
+                        let mut bs_status = occ.get().clone();
+
+                        //check if key 'Buy' or 'Sell' exists
+                        match bs_status.entry(status.clone()) {
+                            //if they key doesnt exist
+                            Vacant(v_buysell) => {
+                                println!("v_buysell: {:?}", v_buysell);
+                                // let bs: HashMap<String, i32> = HashMap::new();
+                                //insert new value => shares * price
+                                v_buysell.insert(
+                                    o_data_s[1].to_string().parse::<i32>().unwrap()
+                                        * o_data_s[2].to_string().parse::<f32>().unwrap() as i32,
+                                );
+                            }
+                            //if key 'Buy' or 'Sell' exists
+                            Occupied(mut buysell_exist) => {
+                                //get previous value {Buy: 123} => prev_val == 123
+                                let prev_val = buysell_exist.get();
+                                // let prev_key = buysell_exist.key();
+
+                                //add new value => share * price + prev_val
+                                buysell_exist.insert(
+                                    o_data_s[1].to_string().parse::<i32>().unwrap()
+                                        * o_data_s[2].to_string().parse::<f32>().unwrap() as i32
+                                        + prev_val,
+                                );
+                            }
+                        }
+                        println!("bs_status: {:?}", bs_status);
+                        occ.insert(bs_status.clone());
+                        Err(())
+                    }
+                }; //result
+                o_data_s
+            }
+
+            Err(e_data_s) => {
+                println!("bad_order: {:?}", e_data_s);
+                let bad_order =
+                    String::from(e_data_s.clone().into_iter().collect::<Vec<_>>().join(" "));
+                bad_orders.push(bad_order.clone());
+                e_data_s
+            } // add to correct Buy Sell hashmaps
+
+              // build data
         };
-        // println!("bad order {:?}", check_order(vv).join(" "));
-        println!("{:?}", vv[3]);
-        if vv[1].parse::<i32>().is_ok() && vv[2].parse::<f64>().is_ok() {
-            let status = "Buy".to_string();
-            let quantity = vv[1].clone();
-            let price = vv[2].clone();
+        // println!("vv[1]: {}", vv[1]);
+        // println!("vv[2]: {}", vv[2]);
+        // println!("data {:?}", data);
+        for (key, value) in &mut data {
+            // println!("[BEFORE] Key: {}, Value: {:?}", key, value);
+            // println!("Value_keys => {:?}", value.keys());
 
-            data.insert(
-                String::from(&vv[0]),
-                HashMap::from([(
-                    status,
-                    vv[1].to_string().parse::<i32>().unwrap()
-                        * vv[2].to_string().parse::<f32>().unwrap() as i32,
-                    // 1,
-                )]),
-            );
-        } else {
-            data.insert(
-                String::from(&vv[0]),
-                HashMap::from([("Buy".to_string(), 0), ("Sell".to_string(), 0)]),
-            );
+            if value.keys().len() == 1 {
+                let temp_status = value.keys().next().unwrap();
+                match temp_status.as_ref() {
+                    "Buy" => value.insert("Sell".to_string(), 0),
+                    "Sell" => value.insert("Buy".to_string(), 0),
+                    &_ => None,
+                };
+                // println!("temp_status {:?}", temp_status);
+            }
+
+            // value.insert("test".to_string(), 1);
+            println!("[AFTER] Key: {}, Value: {:?}", key, value);
         }
-    }
-    // println!("vv[1]: {}", vv[1]);
-    // println!("vv[2]: {}", vv[2]);
-    // println!("data {:?}", data);
-    for (key, value) in &mut data {
-        // println!("[BEFORE] Key: {}, Value: {:?}", key, value);
-        // println!("Value_keys => {:?}", value.keys());
-
-        if value.keys().len() == 1 {
-            let temp_status = value.keys().next().unwrap();
-            match temp_status.as_ref() {
-                "Buy" => value.insert("Sell".to_string(), 0),
-                "Sell" => value.insert("Buy".to_string(), 0),
-                &_ => None,
-            };
-            // println!("temp_status {:?}", temp_status);
-        }
-
-        // value.insert("test".to_string(), 1);
-        println!("[AFTER] Key: {}, Value: {:?}", key, value);
     }
     (data, bad_orders)
 }
@@ -247,9 +331,10 @@ fn check_order(vv: &Vec<String>) -> Result<Vec<String>, Vec<String>> {
     // if vv[1].parse::<f64>().is_ok() {
     //     bad_order = vv.clone();
     // }
+    println!("check_order() vv => {:?}", vv);
     println!(
         "vv[1]_check_float => {:?}: {:?}",
-        vv[1],
+        vv[0],
         vv[1].parse::<i32>().is_ok()
     );
 
@@ -335,15 +420,16 @@ fn main() {
     //     "{:?}",
     //     balance_statement("GOOG 542.0 300 B, GOOG 3000 542.0 S")
     // );
+    // println!("{:?}", balance_statement("GOOG 300 542.0 B"));
+    println!("{:?}", balance_statement("GOOG 1 542.0 B"));
     // println!("{:?}", balance_statement("GOOG 542.0 300 B"));
-    // println!("{:?}", balance_statement("GOOG 542.0 300 B"));
-    println!(
-        "{:?}",
-        // balance_statement(
-        //     "GOOG 1 10.0 B,GOOG 1 10.0 B,GOOG 1 10.0 B,GOOG 1 10.0 S, APPL 10.0 1 B, APPL 10.0 1 B, APPL 2 10.0 B"
-        // )
-        balance_statement(
-            "ZNGA 1300 2.66 B, CLH15.NYM 50 56.32 B, OWW 1000 11.623 B, OGG 20 580.1 B"
-        )
-    );
+    // println!(
+    //     "{:?}",
+    //     // balance_statement(
+    //     //     "GOOG 1 10.0 B,GOOG 1 10.0 B,GOOG 1 10.0 B,GOOG 1 10.0 S, APPL 10.0 1 B, APPL 10.0 1 B, APPL 2 10.0 B"
+    //     // )
+    //     balance_statement(
+    //         "ZNGA 1300 2.66 B, CLH15.NYM 50 56.32 B, OWW 1000 11.623 B, OGG 20 580.1 B"
+    //     )
+    // );
 }
