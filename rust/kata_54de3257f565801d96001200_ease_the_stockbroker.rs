@@ -347,6 +347,8 @@ fn check_order(vv: &Vec<String>) -> Result<Vec<String>, Vec<String>> {
     }
 }
 
+fn parse_data(d: Vec<String>, bad_order: String) -> (Vec<String>, String) {}
+
 fn balance_statement(lst: &str) -> String {
     let vs: Vec<String>;
 
