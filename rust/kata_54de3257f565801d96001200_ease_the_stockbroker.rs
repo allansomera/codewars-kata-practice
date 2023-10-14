@@ -12,8 +12,8 @@ use std::collections::HashMap;
 //     println!("{}", std::any::type_name::<T>())
 // }
 
-fn build(vv: &Vec<String>, multi: bool) -> (HashMap<String, HashMap<String, i32>>, Vec<String>) {
-    let mut data: HashMap<String, HashMap<String, i32>> = HashMap::new();
+fn build(vv: &Vec<String>, multi: bool) -> (HashMap<String, HashMap<String, f64>>, Vec<String>) {
+    let mut data: HashMap<String, HashMap<String, f64>> = HashMap::new();
     // let mut bad_order: String = String::new();
     let mut bad_orders: Vec<String> = Vec::new();
     // let buy_sell: Vec<Vec<(String, i32)>> = Vec::new();
@@ -349,8 +349,8 @@ fn check_order(vv: &Vec<String>) -> Result<Vec<String>, Vec<String>> {
     }
 }
 
-fn parse_data(tmp_vv: &Vec<String>) -> (HashMap<String, HashMap<String, i32>>, Vec<String>) {
-    let mut data: HashMap<String, HashMap<String, i32>> = HashMap::new();
+fn parse_data(tmp_vv: &Vec<String>) -> (HashMap<String, HashMap<String, f64>>, Vec<String>) {
+    let mut data: HashMap<String, HashMap<String, f64>> = HashMap::new();
     // let mut bad_order: String = String::new();
     let mut bad_orders: Vec<String> = Vec::new();
 
