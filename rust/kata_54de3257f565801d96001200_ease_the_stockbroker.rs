@@ -549,12 +549,18 @@ fn balance_statement(lst: &str) -> String {
             }
             // println!("Key: {:?}, Value: {:?}", key, value)
         }
-        let bad_orders_string = bad_orders
-            .clone()
-            .into_iter()
-            .map(|x| x.to_string())
-            .collect::<Vec<String>>()
-            .join(" ;");
+        let bad_orders_string: String = String::new();
+
+        if bad_orders.len() == 0 {
+            bad_orders_string = "".to_string()
+        } else {
+            bad_orders_string = bad_orders
+                .clone()
+                .into_iter()
+                .map(|x| x.to_string())
+                .collect::<Vec<String>>()
+                .join(" ;");
+        }
 
         final_statement = format!(
             "Buy : {} Sell: {}; Badly formed {}: {} ;",
