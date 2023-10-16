@@ -396,7 +396,7 @@ fn parse_data(tmp_vv: &Vec<String>) -> (HashMap<String, HashMap<String, f64>>, V
                     buy_sell.insert(
                         status.clone(),
                         o_data[1].to_string().parse::<i32>().unwrap()
-                            * o_data[2].to_string().parse::<f32>().unwrap() as i32,
+                            * o_data[2].to_string().parse::<f64>().unwrap() as f64,
                     );
                     new_stock_name.insert(buy_sell.clone());
                     Ok(())
@@ -418,7 +418,7 @@ fn parse_data(tmp_vv: &Vec<String>) -> (HashMap<String, HashMap<String, f64>>, V
                             //insert new value => shares * price
                             v_buysell.insert(
                                 o_data[1].to_string().parse::<i32>().unwrap()
-                                    * o_data[2].to_string().parse::<f32>().unwrap() as i32,
+                                    * o_data[2].to_string().parse::<f64>().unwrap() as f64,
                             );
                             // println!("v_buysell=>after: {:?}", v_buysell);
                             // occ.insert(bs.clone());
