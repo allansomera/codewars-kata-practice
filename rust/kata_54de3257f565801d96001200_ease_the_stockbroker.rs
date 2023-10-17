@@ -313,8 +313,14 @@ fn build(vv: &Vec<String>, multi: bool) -> (HashMap<String, HashMap<String, f64>
         if value.keys().len() == 1 {
             let temp_status = value.keys().next().unwrap();
             match temp_status.as_ref() {
-                "Buy" => value.insert("Sell".to_string(), 0),
-                "Sell" => value.insert("Buy".to_string(), 0),
+                "Buy" => value.insert(
+                    "Sell".to_string(),
+                    format!("{:.0}", 0).parse::<f64>().unwrap(),
+                ),
+                "Sell" => value.insert(
+                    "Buy".to_string(),
+                    format!("{:.0}", 0).parse::<f64>().unwrap(),
+                ),
                 &_ => None,
             };
             // println!("temp_status {:?}", temp_status);
@@ -389,14 +395,15 @@ fn parse_data(tmp_vv: &Vec<String>) -> (HashMap<String, HashMap<String, f64>>, V
                     //     o_data[1].to_string().parse::<i32>().unwrap()
                     //         * o_data[2].to_string().parse::<f32>().unwrap() as i32,
                     // )]));
-                    let mut buy_sell: HashMap<String, i32> = HashMap::new();
+                    let mut buy_sell: HashMap<String, f64> = HashMap::new();
 
                     // since the hashmap has the structure {GOOG: {Buy: 23123, Sell: 123123}}
                     // grab the status and insert a new hashmap
                     buy_sell.insert(
                         status.clone(),
-                        o_data[1].to_string().parse::<i32>().unwrap()
-                            * o_data[2].to_string().parse::<f64>().unwrap() as f64,
+                        ((o_data[1].to_string().parse::<f64>().unwrap() as f64)
+                            * o_data[2].to_string().parse::<f64>().unwrap())
+                            as f64,
                     );
                     new_stock_name.insert(buy_sell.clone());
                     Ok(())
@@ -417,8 +424,9 @@ fn parse_data(tmp_vv: &Vec<String>) -> (HashMap<String, HashMap<String, f64>>, V
                             // let bs: HashMap<String, i32> = HashMap::new();
                             //insert new value => shares * price
                             v_buysell.insert(
-                                o_data[1].to_string().parse::<i32>().unwrap()
-                                    * o_data[2].to_string().parse::<f64>().unwrap() as f64,
+                                (o_data[1].to_string().parse::<f64>().unwrap() as f64
+                                    * o_data[2].to_string().parse::<f64>().unwrap())
+                                    as f64,
                             );
                             // println!("v_buysell=>after: {:?}", v_buysell);
                             // occ.insert(bs.clone());
@@ -435,9 +443,10 @@ fn parse_data(tmp_vv: &Vec<String>) -> (HashMap<String, HashMap<String, f64>>, V
 
                             //add new value => share * price + prev_val
                             buysell_exist.insert(
-                                o_data[1].to_string().parse::<i32>().unwrap()
-                                    * o_data[2].to_string().parse::<f32>().unwrap() as i32
-                                    + prev_val,
+                                (o_data[1].to_string().parse::<i32>().unwrap() as f64
+                                    * o_data[2].to_string().parse::<f64>().unwrap())
+                                    as f64
+                                    + *prev_val as f64,
                             );
                             // println!("prev: {:?}", prev);
                             // buysell_exist
@@ -506,8 +515,14 @@ fn parse_data(tmp_vv: &Vec<String>) -> (HashMap<String, HashMap<String, f64>>, V
         if value.keys().len() == 1 {
             let temp_status = value.keys().next().unwrap();
             match temp_status.as_ref() {
-                "Buy" => value.insert("Sell".to_string(), 0),
-                "Sell" => value.insert("Buy".to_string(), 0),
+                "Buy" => value.insert(
+                    "Sell".to_string(),
+                    format!("{:.0}", 0).parse::<f64>().unwrap(),
+                ),
+                "Sell" => value.insert(
+                    "Buy".to_string(),
+                    format!("{:.0}", 0).parse::<f64>().unwrap(),
+                ),
                 &_ => None,
             };
             // println!("temp_status {:?}", temp_status);
@@ -536,8 +551,8 @@ fn balance_statement(lst: &str) -> String {
         println!("bad_orders: {:?}", bad_orders);
         println!("Badly formed {}", bad_orders.len());
         let mut final_statement: String = String::new();
-        let mut buy = 0;
-        let mut sell = 0;
+        let mut buy = 0_f64;
+        let mut sell = 0_f64;
         for (key, value) in &good_orders {
             for (v_key, v_val) in value {
                 println!("v_key: {:?}, v_val: {:?}", v_key, v_val);
@@ -549,7 +564,7 @@ fn balance_statement(lst: &str) -> String {
             }
             // println!("Key: {:?}, Value: {:?}", key, value)
         }
-        let bad_orders_string: String = String::new();
+        let mut bad_orders_string: String = String::new();
 
         if bad_orders.len() == 0 {
             bad_orders_string = "".to_string()
@@ -563,7 +578,7 @@ fn balance_statement(lst: &str) -> String {
         }
 
         final_statement = format!(
-            "Buy : {} Sell: {}; Badly formed {}: {} ;",
+            "Buy : {:.0} Sell: {:.0}; Badly formed {}: {} ;",
             buy,
             sell,
             bad_orders.len(),
