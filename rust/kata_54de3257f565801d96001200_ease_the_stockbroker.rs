@@ -578,9 +578,9 @@ fn balance_statement(lst: &str) -> String {
         }
 
         final_statement = format!(
-            "Buy : {:.0} Sell: {:.0}; Badly formed {}: {} ;",
-            buy,
-            sell,
+            "Buy : {:?} Sell: {:?}; Badly formed {}: {} ;",
+            buy as i64,
+            sell as i64,
             bad_orders.len(),
             bad_orders_string
         );
