@@ -584,6 +584,17 @@ fn balance_statement(lst: &str) -> String {
             bad_orders.len(),
             bad_orders_string
         );
+
+        final_statement = match bad_orders.len() {
+            0 => format!("Buy : {:?} Sell: {:?};", buy as i64, sell as i64,),
+            _ => format!(
+                "Buy : {:?} Sell: {:?}; Badly formed {}: {} ;",
+                buy as i64,
+                sell as i64,
+                bad_orders.len(),
+                bad_orders_string
+            ),
+        };
         println!("buy: {}", buy);
         println!("sell: {}", sell);
         return final_statement;
