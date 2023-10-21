@@ -616,7 +616,8 @@ fn balance_statement(lst: &str) -> String {
             .map(|x| x.to_string())
             .collect::<Vec<String>>();
         println!("ws: {:?}", vs);
-        println!("build {:?}", build(&vs, false));
+        let (good_orders, _) = build(&vs, false);
+        println!("build {:?}", good_orders);
         // vs.iter().for_each(|x| println!("{:?}", x));
     }
 
