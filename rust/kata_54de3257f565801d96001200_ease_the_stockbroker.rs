@@ -23,7 +23,7 @@ fn build(vv: &Vec<String>, multi: bool) -> (HashMap<String, HashMap<String, f64>
 
     if multi {
         println!("multi({}) => {:?}", multi, vv);
-        println!("inside for: {}", "\n=====\n");
+        println!("\ninside for: {}", "\n=====\n");
         for i in vv.into_iter() {
             let tmp_vv: Vec<String> = i
                 .trim()
@@ -497,11 +497,12 @@ fn parse_data(tmp_vv: &Vec<String>) -> (HashMap<String, HashMap<String, f64>>, V
             println!("bad_order: {:?}", e);
             let bad_order = String::from(e.clone().into_iter().collect::<Vec<_>>().join(" "));
             bad_orders.push(bad_order.clone());
+            println!("bad_orders Err(e) {:?}", bad_orders);
             e
         }
     };
 
-    println!("build_data: {:?}", build_data);
+    // println!("build_data: {:?}", build_data);
     println!("val - type : {:?}", check_order(&tmp_vv));
     println!(
         "{}",
@@ -531,6 +532,8 @@ fn parse_data(tmp_vv: &Vec<String>) -> (HashMap<String, HashMap<String, f64>>, V
         // value.insert("test".to_string(), 1);
         println!("[AFTER] Key: {}, Value: {:?}", key, value);
     }
+    println!("parse data {:?}", data.clone());
+    println!("parse bad_orders {:?}", bad_orders);
     (data.clone(), bad_orders.clone())
 }
 
@@ -635,7 +638,15 @@ fn main() {
     //     "{:?}",
     //     balance_statement("GOOG 542.0 300 B, GOOG 3000 542.0 S")
     // );
-    println!("{:?}", balance_statement("GOOG 300 542.0 B"));
+    // println!(
+    //     "{:?}",
+    //     balance_statement("GOOG 542.0 300 B, APPL 3000 542.0 S, GOOG 300 542.0 B")
+    // );
+    println!(
+        "{:?}",
+        balance_statement("GOOG 542.0 300 B, APPL 100 10.0 S, GOOG 100 10.0 B")
+    );
+    // println!("{:?}", balance_statement("GOOG 300 542.0 B"));
     // println!("{:?}", balance_statement("GOOG 1 542.0 B"));
     // println!("{:?}", balance_statement("GOOG 542.0 300 B"));
     // println!(
@@ -643,8 +654,6 @@ fn main() {
     //     balance_statement(
     //         "GOOG 1 10.0 B,GOOG 1 10.0 B,GOOG 1 10.0 B,GOOG 1 10.0 S, APPL 10.0 1 B, APPL 10.0 1 B, APPL 2 10.0 B"
     //     ));
-    //     balance_statement(
-    //         "ZNGA 1300 2.66 B, CLH15.NYM 50 56.32 B, OWW 1000 11.623 B, OGG 20 580.1 B"
-    //     )
+    // balance_statement("ZNGA 1300 2.66 B, CLH15.NYM 50 56.32 B, OWW 1000 11.623 B, OGG 20 580.1 B");
     // );
 }
