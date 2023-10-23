@@ -349,6 +349,17 @@ fn check_order(vv: &Vec<String>) -> Result<Vec<String>, Vec<String>> {
     );
     let order = vv[1].parse::<i32>().is_ok();
     let price = !vv[2].parse::<i32>().is_ok();
+    let vv_length_true = vv.len() == 4;
+    let letter: bool;
+    if vv_length_true {
+        letter = match vv[3].as_ref() {
+            "B" | "S" => true,
+            _ => false,
+        };
+    } else {
+        letter = false;
+    }
+
     println!("order is i32 {:?}", order);
     println!("price is f64 {:?}", price);
 
@@ -359,7 +370,7 @@ fn check_order(vv: &Vec<String>) -> Result<Vec<String>, Vec<String>> {
     // } else {
     //     return Ok(vv.clone());
     // }
-    if order && price {
+    if ((order && price) && vv_length_true) && letter {
         Ok(vv.clone())
     } else {
         Err(vv.clone())
@@ -376,7 +387,7 @@ fn parse_data(
     // let mut bad_order: String = String::new();
     // let mut bad_orders: Vec<String> = Vec::new();
 
-    let build_data = match check_order(&tmp_vv) {
+    let _build_data = match check_order(&tmp_vv) {
         //build data
         Ok(o_data) => {
             let status = match o_data[3].as_ref() {
@@ -553,29 +564,32 @@ fn parse_data(
     // (data.clone(), bad_orders.clone())
 }
 
+fn banker_round(x: &f64) -> i64 {
+    let whole = x.clone().floor() as i64;
+    let fraction = x - whole as f64;
+
+    if fraction < 0.5 {
+        whole
+    } else if fraction > 0.5 {
+        whole + 1
+    } else {
+        if whole % 2 == 0 {
+            whole
+        } else {
+            whole + 1
+        }
+    }
+}
+
 fn format_statement(
     final_statement: &mut String,
     bad_orders_string: &mut String,
-    good_orders: &HashMap<String, HashMap<String, f64>>,
     bad_orders: &Vec<String>,
     buy: &f64,
     sell: &f64,
 ) {
-    *final_statement = match bad_orders.len() {
-        0 => format!(
-            "Buy : {:?} Sell: {:?};",
-            buy.clone() as i64,
-            sell.clone() as i64,
-        ),
-        _ => format!(
-            "Buy : {:?} Sell: {:?}; Badly formed {}: {} ;",
-            buy.round() as i64,
-            sell.round() as i64,
-            bad_orders.len(),
-            bad_orders_string
-        ),
-    };
-
+    let buy_rounded: i64;
+    let sell_rounded: i64;
     *bad_orders_string = match bad_orders.len() {
         0 => "".to_string(),
         _ => bad_orders
@@ -585,6 +599,25 @@ fn format_statement(
             .collect::<Vec<String>>()
             .join(" ;"),
     };
+    buy_rounded = banker_round(buy);
+    sell_rounded = banker_round(sell);
+
+    *final_statement = match bad_orders.len() {
+        0 => format!("Buy : {:?} Sell: {:?}", buy_rounded, sell_rounded,),
+        _ => format!(
+            "Buy : {:?} Sell: {:?}; Badly formed {}: {} ;",
+            buy_rounded,
+            sell_rounded,
+            bad_orders.len(),
+            bad_orders_string
+        ),
+    };
+    // println!(
+    //     "format_statement bad_orders_string: {:?}",
+    //     bad_orders_string
+    // );
+    // println!("format_statement bad_orders: {:?}", bad_orders);
+    // println!("format_statement bad_orders_string {:?}", bad_orders_string)
 }
 fn balance_statement(lst: &str) -> String {
     let vs: Vec<String>;
@@ -598,7 +631,7 @@ fn balance_statement(lst: &str) -> String {
         vs = lst
             .split(",")
             .into_iter()
-            .map(|x| x.to_string())
+            .map(|x| x.trim().to_string())
             .collect::<Vec<String>>();
         println!("comma: {:?}", vs);
         // println!("build {:?}", build(&vs, true));
@@ -606,7 +639,7 @@ fn balance_statement(lst: &str) -> String {
         println!("good_orders: {:?}", good_orders);
         println!("bad_orders: {:?}", bad_orders);
         println!("Badly formed {}", bad_orders.len());
-        for (key, value) in &good_orders {
+        for (_key, value) in &good_orders {
             for (v_key, v_val) in value {
                 println!("v_key: {:?}, v_val: {:?}", v_key, v_val);
                 match v_key.as_ref() {
@@ -661,11 +694,11 @@ fn balance_statement(lst: &str) -> String {
         format_statement(
             &mut final_statement,
             &mut bad_orders_string,
-            &good_orders,
             &bad_orders,
             &buy,
             &sell,
         );
+        // println!("[AFTER] bad_orders_string {:?}", bad_orders_string);
         println!("buy: {}", buy);
         println!("sell: {}", sell);
         return final_statement;
@@ -693,7 +726,7 @@ fn balance_statement(lst: &str) -> String {
         //         .collect::<Vec<String>>()
         //         .join(" ;"),
         // };
-        for (key, value) in &good_orders {
+        for (_key, value) in &good_orders {
             for (v_key, v_val) in value {
                 println!("v_key: {:?}, v_val: {:?}", v_key, v_val);
                 match v_key.as_ref() {
@@ -718,7 +751,6 @@ fn balance_statement(lst: &str) -> String {
         format_statement(
             &mut final_statement,
             &mut bad_orders_string,
-            &good_orders,
             &bad_orders,
             &buy,
             &sell,
@@ -732,7 +764,6 @@ fn balance_statement(lst: &str) -> String {
     //     println!("type_of: {:?}", type_of(&x))
     // }
     // println!("build {:?}", build(&vs, false));
-    "test".to_string()
 }
 
 fn main() {
@@ -765,8 +796,95 @@ fn main() {
     // );
     println!(
         "{:?}",
-        balance_statement(
-            "GOOG 90 160.45 B, JPMC 67 12.8 S, MYSPACE 24.0 210 B, CITI 50 450 B, CSCO 100 55.5 S"
-        )
+        balance_statement("JPMC 24.0 55.5 S, MY SPACE 50 45.5 B, CITI 67 5.5 B, CSCO 45 210 S, GOOG 15 160.45 P, ZYGN 100 89.3 C")
     );
 }
+
+// soln:
+// fn balance_statement(lst: &str) -> String {
+//     if lst.is_empty() {
+//         return String::from("Buy: 0 Sell: 0");
+//     }
+//
+//     let mut buy = 0.0;
+//     let mut sell = 0.0;
+//     let mut malformed = vec![];
+//
+//     for order in lst.split(", ") {
+//         if let [quote, quantity, price, status] =
+//             order.split_whitespace().collect::<Vec<_>>().as_slice()
+//         {
+//             if quote.contains(" ") || !price.contains(".") {
+//                 malformed.push(order);
+//             } else {
+//                 match (*status, quantity.parse::<u64>(), price.parse::<f64>()) {
+//                     ("B", Ok(q), Ok(p)) => buy += q as f64 * p,
+//                     ("S", Ok(q), Ok(p)) => sell += q as f64 * p,
+//                     _ => {
+//                         malformed.push(order);
+//                     }
+//                 }
+//             }
+//         } else {
+//             malformed.push(order);
+//         }
+//     }
+//
+//     let mut result = format!("Buy: {:.0} Sell: {:.0}", buy, sell);
+//
+//     if !malformed.is_empty() {
+//         result += format!(
+//             "; Badly formed {}: {} ;",
+//             malformed.len(),
+//             malformed.join(" ;")
+//         )
+//         .as_str();
+//     }
+//
+//     result
+// }
+//
+// #[macro_use] extern crate lazy_static;
+// use regex::Regex;
+//
+// fn balance_statement(lst: &str) -> String {
+//     lazy_static! {
+//         static ref FMT: Regex = Regex::new(r"^\S+ (\d+) (\d*\.\d*) ([BS])$").unwrap();
+//     }
+//     let mut buy = 0.0f64;
+//     let mut sell = 0.0f64;
+//     let mut bad: Vec<&str> = vec![];
+//     lst.split(',').map(|s| s.trim()).for_each(|s| {
+//         if let Some(cap) = FMT.captures(s) {
+//             let quantity = cap[1].parse::<f64>().unwrap();
+//             let price = cap[2].parse::<f64>().unwrap();
+//             if &cap[3] == "B" { buy += quantity * price }
+//             else { sell += quantity * price }
+//         } else if !s.is_empty() {
+//             bad.push(s)
+//         }
+//     });
+//     if bad.is_empty() {
+//         format!("Buy: {:.0} Sell: {:.0}", buy, sell)
+//     } else {
+//         format!("Buy: {:.0} Sell: {:.0}; Badly formed {}: {}",
+//             buy, sell, bad.len(), bad.iter().map(|s| s.to_string() + " ;").collect::<String>())
+//     }
+// }
+//
+// fn balance_statement(l: &str) -> String {
+//     let r = regex::Regex::new(r"^([^\s]+) (\d+) (\d+\.\d+) ([BS])$").unwrap();
+//
+//     l.split(',')
+//         .map(str::trim)
+//         .fold(([0.0; 2], vec![], "".to_owned()), |(mut t, mut e, _), o| {
+//             match r.captures(o) {
+//                 Some(c) => t[(&c[4] == "S") as usize] += c[2].parse::<f64>().unwrap() * c[3].parse::<f64>().unwrap(),
+//                 None if !o.is_empty() => e.push(o.to_string()),
+//                 _ => {}
+//             }
+//             (t, e.clone(), format!("Buy: {:.0} Sell: {:.0}{}", t[0], t[1],
+//                 ["", &format!("; Badly formed {}: {} ;", e.len(), e.join(" ;"))]
+//                 [(!e.is_empty()) as usize]))
+//         }).2
+// }
