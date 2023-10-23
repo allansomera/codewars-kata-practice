@@ -186,8 +186,9 @@ fn build(vv: &Vec<String>, multi: bool) -> (HashMap<String, HashMap<String, f64>
             //     "\n+++++++++++++++++++++++++++++++++++++++++\n".to_string()
             // );
 
-            (data, bad_orders) = parse_data(&tmp_vv);
+            parse_data(&tmp_vv, &mut data, &mut bad_orders);
         }
+        // (data, bad_orders)
     } else {
         //multi is false
 
@@ -305,7 +306,8 @@ fn build(vv: &Vec<String>, multi: bool) -> (HashMap<String, HashMap<String, f64>
         // println!("vv[1]: {}", vv[1]);
         // println!("vv[2]: {}", vv[2]);
         // println!("data {:?}", data);
-        (data, bad_orders) = parse_data(&vv)
+        // (data, bad_orders) = parse_data(&vv)
+        parse_data(&vv, &mut data, &mut bad_orders)
     }
     for (key, value) in &mut data {
         println!("[BEFORE] Key: {}, Value: {:?}", key, value);
@@ -345,20 +347,34 @@ fn check_order(vv: &Vec<String>) -> Result<Vec<String>, Vec<String>> {
         vv[0],
         vv[1].parse::<i32>().is_ok()
     );
+    let order = vv[1].parse::<i32>().is_ok();
+    let price = !vv[2].parse::<i32>().is_ok();
+    println!("order is i32 {:?}", order);
+    println!("price is f64 {:?}", price);
 
     //if vv[1] == "300.0" will fail
-    if !vv[1].parse::<i32>().is_ok() {
-        println!("{:?} is a float", vv[1]);
-        return Err(vv.clone());
+    // if !vv[1].parse::<i32>().is_ok() {
+    //     println!("{:?} is a float", vv[1]);
+    //     return Err(vv.clone());
+    // } else {
+    //     return Ok(vv.clone());
+    // }
+    if order && price {
+        Ok(vv.clone())
     } else {
-        return Ok(vv.clone());
+        Err(vv.clone())
     }
 }
 
-fn parse_data(tmp_vv: &Vec<String>) -> (HashMap<String, HashMap<String, f64>>, Vec<String>) {
-    let mut data: HashMap<String, HashMap<String, f64>> = HashMap::new();
+fn parse_data(
+    tmp_vv: &Vec<String>,
+    data: &mut HashMap<String, HashMap<String, f64>>,
+    bad_orders: &mut Vec<String>,
+    // ) -> (HashMap<String, HashMap<String, f64>>, Vec<String>) {
+) {
+    // let mut data: HashMap<String, HashMap<String, f64>> = HashMap::new();
     // let mut bad_order: String = String::new();
-    let mut bad_orders: Vec<String> = Vec::new();
+    // let mut bad_orders: Vec<String> = Vec::new();
 
     let build_data = match check_order(&tmp_vv) {
         //build data
@@ -509,7 +525,7 @@ fn parse_data(tmp_vv: &Vec<String>) -> (HashMap<String, HashMap<String, f64>>, V
         "\n+++++++++++++++++++++++++++++++++++++++++\n".to_string()
     );
 
-    for (key, value) in &mut data {
+    for (key, mut value) in data.clone().into_iter() {
         // println!("[BEFORE] Key: {}, Value: {:?}", key, value);
         // println!("Value_keys => {:?}", value.keys());
 
@@ -534,12 +550,49 @@ fn parse_data(tmp_vv: &Vec<String>) -> (HashMap<String, HashMap<String, f64>>, V
     }
     println!("parse data {:?}", data.clone());
     println!("parse bad_orders {:?}", bad_orders);
-    (data.clone(), bad_orders.clone())
+    // (data.clone(), bad_orders.clone())
 }
 
+fn format_statement(
+    final_statement: &mut String,
+    bad_orders_string: &mut String,
+    good_orders: &HashMap<String, HashMap<String, f64>>,
+    bad_orders: &Vec<String>,
+    buy: &f64,
+    sell: &f64,
+) {
+    *final_statement = match bad_orders.len() {
+        0 => format!(
+            "Buy : {:?} Sell: {:?};",
+            buy.clone() as i64,
+            sell.clone() as i64,
+        ),
+        _ => format!(
+            "Buy : {:?} Sell: {:?}; Badly formed {}: {} ;",
+            buy.round() as i64,
+            sell.round() as i64,
+            bad_orders.len(),
+            bad_orders_string
+        ),
+    };
+
+    *bad_orders_string = match bad_orders.len() {
+        0 => "".to_string(),
+        _ => bad_orders
+            .clone()
+            .into_iter()
+            .map(|x| x.to_string())
+            .collect::<Vec<String>>()
+            .join(" ;"),
+    };
+}
 fn balance_statement(lst: &str) -> String {
     let vs: Vec<String>;
 
+    let mut final_statement: String = String::new();
+    let mut bad_orders_string: String = String::new();
+    let mut buy = 0_f64;
+    let mut sell = 0_f64;
     //multi
     if lst.contains(",") {
         vs = lst
@@ -553,9 +606,6 @@ fn balance_statement(lst: &str) -> String {
         println!("good_orders: {:?}", good_orders);
         println!("bad_orders: {:?}", bad_orders);
         println!("Badly formed {}", bad_orders.len());
-        let mut final_statement: String = String::new();
-        let mut buy = 0_f64;
-        let mut sell = 0_f64;
         for (key, value) in &good_orders {
             for (v_key, v_val) in value {
                 println!("v_key: {:?}, v_val: {:?}", v_key, v_val);
@@ -567,7 +617,6 @@ fn balance_statement(lst: &str) -> String {
             }
             // println!("Key: {:?}, Value: {:?}", key, value)
         }
-        let mut bad_orders_string: String = String::new();
 
         // if bad_orders.len() == 0 {
         //     bad_orders_string = "".to_string()
@@ -580,34 +629,43 @@ fn balance_statement(lst: &str) -> String {
         //         .join(" ;");
         // }
 
-        bad_orders_string = match bad_orders.len() {
-            0 => "".to_string(),
-            _ => bad_orders
-                .clone()
-                .into_iter()
-                .map(|x| x.to_string())
-                .collect::<Vec<String>>()
-                .join(" ;"),
-        };
+        // bad_orders_string = match bad_orders.len() {
+        //     0 => "".to_string(),
+        //     _ => bad_orders
+        //         .clone()
+        //         .into_iter()
+        //         .map(|x| x.to_string())
+        //         .collect::<Vec<String>>()
+        //         .join(" ;"),
+        // };
 
-        final_statement = format!(
-            "Buy : {:?} Sell: {:?}; Badly formed {}: {} ;",
-            buy as i64,
-            sell as i64,
-            bad_orders.len(),
-            bad_orders_string
+        // final_statement = format!(
+        //     "Buy : {:?} Sell: {:?}; Badly formed {}: {} ;",
+        //     buy as i64,
+        //     sell as i64,
+        //     bad_orders.len(),
+        //     bad_orders_string
+        // );
+
+        // final_statement = match bad_orders.len() {
+        //     0 => format!("Buy : {:?} Sell: {:?};", buy as i64, sell as i64,),
+        //     _ => format!(
+        //         "Buy : {:?} Sell: {:?}; Badly formed {}: {} ;",
+        //         buy.round() as i64,
+        //         sell.round() as i64,
+        //         bad_orders.len(),
+        //         bad_orders_string
+        //     ),
+        // };
+
+        format_statement(
+            &mut final_statement,
+            &mut bad_orders_string,
+            &good_orders,
+            &bad_orders,
+            &buy,
+            &sell,
         );
-
-        final_statement = match bad_orders.len() {
-            0 => format!("Buy : {:?} Sell: {:?};", buy as i64, sell as i64,),
-            _ => format!(
-                "Buy : {:?} Sell: {:?}; Badly formed {}: {} ;",
-                buy as i64,
-                sell as i64,
-                bad_orders.len(),
-                bad_orders_string
-            ),
-        };
         println!("buy: {}", buy);
         println!("sell: {}", sell);
         return final_statement;
@@ -619,9 +677,53 @@ fn balance_statement(lst: &str) -> String {
             .map(|x| x.to_string())
             .collect::<Vec<String>>();
         println!("ws: {:?}", vs);
-        let (good_orders, _) = build(&vs, false);
+        let (good_orders, bad_orders) = build(&vs, false);
         println!("build {:?}", good_orders);
         // vs.iter().for_each(|x| println!("{:?}", x));
+        // let mut final_statement: String = String::new();
+        // let mut bad_orders_string: String = String::new();
+        // let mut buy = 0_f64;
+        // let mut sell = 0_f64;
+        // bad_orders_string = match bad_orders.len() {
+        //     0 => "".to_string(),
+        //     _ => bad_orders
+        //         .clone()
+        //         .into_iter()
+        //         .map(|x| x.to_string())
+        //         .collect::<Vec<String>>()
+        //         .join(" ;"),
+        // };
+        for (key, value) in &good_orders {
+            for (v_key, v_val) in value {
+                println!("v_key: {:?}, v_val: {:?}", v_key, v_val);
+                match v_key.as_ref() {
+                    "Buy" => buy += v_val,
+                    "Sell" => sell += v_val,
+                    &_ => (),
+                }
+            }
+            // println!("Key: {:?}, Value: {:?}", key, value)
+        }
+
+        // final_statement = match bad_orders.len() {
+        //     0 => format!("Buy : {:?} Sell: {:?};", buy as i64, sell as i64,),
+        //     _ => format!(
+        //         "Buy : {:?} Sell: {:?}; Badly formed {}: {} ;",
+        //         buy.round() as i64,
+        //         sell.round() as i64,
+        //         bad_orders.len(),
+        //         bad_orders_string
+        //     ),
+        // };
+        format_statement(
+            &mut final_statement,
+            &mut bad_orders_string,
+            &good_orders,
+            &bad_orders,
+            &buy,
+            &sell,
+        );
+        return final_statement;
     }
 
     // println!("first: {}", vs[0]);
@@ -642,10 +744,11 @@ fn main() {
     //     "{:?}",
     //     balance_statement("GOOG 542.0 300 B, APPL 3000 542.0 S, GOOG 300 542.0 B")
     // );
-    println!(
-        "{:?}",
-        balance_statement("GOOG 542.0 300 B, APPL 100 10.0 S, GOOG 100 10.0 B")
-    );
+    // println!(
+    //     "{:?}",
+    //     balance_statement("GOOG 542.0 300 B, APPL 100 10.0 S, GOOG 100 10.0 B")
+    // );
+    // println!("{:?}", balance_statement("GOOG 300 542.0 B, APPL 200.0 20"));
     // println!("{:?}", balance_statement("GOOG 300 542.0 B"));
     // println!("{:?}", balance_statement("GOOG 1 542.0 B"));
     // println!("{:?}", balance_statement("GOOG 542.0 300 B"));
@@ -656,4 +759,14 @@ fn main() {
     //     ));
     // balance_statement("ZNGA 1300 2.66 B, CLH15.NYM 50 56.32 B, OWW 1000 11.623 B, OGG 20 580.1 B");
     // );
+    // println!(
+    //     "{:?}",
+    //     balance_statement("GOOG 300 542.0 B, AAPL 50 145.0 B, CSCO 250.0 29 B, GOOG 200 580.0 S")
+    // );
+    println!(
+        "{:?}",
+        balance_statement(
+            "GOOG 90 160.45 B, JPMC 67 12.8 S, MYSPACE 24.0 210 B, CITI 50 450 B, CSCO 100 55.5 S"
+        )
+    );
 }
