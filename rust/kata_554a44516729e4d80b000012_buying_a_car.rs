@@ -4,9 +4,11 @@ fn nb_months(old: i32, new: i32, saving: i32, perc: f64) -> (i32, i32) {
     let p = perc.clone();
 
     // println!("old_dep = {:?} / ({:?} + {:?})", old, 1.0, perc / 100.0);
+    let calc = new_dep - old_dep - saving as f64;
     println!("old_dep {:?}", old_dep);
     println!("new_dep {:?}", new_dep);
-    println!("calc: {:?}", new_dep - old_dep - saving as f64);
+    println!("calc: {:?}", calc);
+
     (0, 0)
 }
 
