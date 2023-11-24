@@ -49,6 +49,7 @@ fn nb_months(old: i32, new: i32, saving: i32, perc: f64) -> (i32, i32) {
     let mut new_f = new as f64 * (1.0 - (perc / 100.0));
     println!("new_f {:?}", new_f);
     let mut old_saving = old_first + saving as f64;
+    println!("old_saving {:?}", old_saving);
     let mut saved = 0.0;
     (0, 0)
 }
