@@ -1,3 +1,7 @@
+//
+// ABANDONED
+//
+
 fn nb_months(old: i32, new: i32, saving: i32, perc: f64) -> (i32, i32) {
     // let mut calc = ((old + saving) as f64) - new as f64;
     // println!("{:?}", calc);
