@@ -1,7 +1,15 @@
 fn sort_array(arr: &[i32]) -> Vec<i32> {
+    // let mut v: Vec<i32> = arr
+    //     .into_iter()
+    //     .filter(|x| *x % 2 == 0)
+    //     .copied()
+    //     .collect::<Vec<i32>>();
+    // println!("v: {:?}", v);
+    // v
     let mut v: Vec<i32> = arr
-        .into_iter()
-        .filter(|x| *x % 2 == 0)
+        .iter()
+        .enumerate()
+        .filter(|(_, &el)| el % 2 == 0)
         .copied()
         .collect::<Vec<i32>>();
     println!("v: {:?}", v);
