@@ -1,5 +1,7 @@
+use regex::Regex;
+
 fn dup(arry: Vec<String>) -> Vec<String> {
-    todo!()
+    let re = Regex::new(r"(.)+").unwrap();
 }
 
 fn main() {
