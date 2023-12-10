@@ -1,17 +1,26 @@
-use regex::Regex;
-
 fn dup(arry: Vec<String>) -> Vec<String> {
-    let re = Regex::new(r"(.)+").unwrap();
-    for (i, el) in arry.iter().enumerate() {
-        let matches = re
-            .find_iter(*el)
-            .filter_map(|str| str.as_str().parse().ok())
-            .collect();
-        println!("matches: {:?}", matches);
+    let mut n_vec: Vec<String> = Vec::new();
+    for s in &arry {
+        let mut result = String::new();
+        let mut prev_char: Option<char> = None;
+        for c in s.chars() {
+            if prev_char != Some(c) {
+                result.push(c);
+            }
+            prev_char = Some(c);
+        }
+        n_vec.push(result.clone());
     }
     todo!()
 }
 
 fn main() {
-    println!("{:?}", dup(["abracadabra", "allottee", "assessee"]));
+    println!(
+        "{:?}",
+        dup(vec![
+            "abracadabra".to_string(),
+            "allottee".to_string(),
+            "assessee".to_string()
+        ])
+    );
 }
