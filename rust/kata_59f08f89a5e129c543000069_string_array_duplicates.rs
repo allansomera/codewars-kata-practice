@@ -62,4 +62,7 @@ fn main() {
 //         ).collect()
 // }
 //
-//
+// use itertools::Itertools;
+// fn dup(arry: Vec<String>) -> Vec<String> {
+//     arry.into_iter().map(|x| x.chars().dedup().collect::<String>()).collect()
+// }
