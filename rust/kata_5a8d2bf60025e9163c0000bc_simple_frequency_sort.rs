@@ -1,6 +1,6 @@
 fn solve(vec: &[i32]) -> Vec<i32> {
     let mut c: Vec<i32> = vec.into_iter().map(|x| *x as i32).collect::<Vec<i32>>();
-    c.sort();
+    c.sort_unstable_by(|a,b|);
     println!("c: {:?}", c);
     c
 }
