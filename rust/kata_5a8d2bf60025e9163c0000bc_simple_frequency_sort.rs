@@ -5,13 +5,15 @@ fn solve(vec: &[i32]) -> Vec<i32> {
     for (i, el) in c.iter().enumerate() {
         cnt.insert(*el, cnt.get(&el).unwrap_or(&0) + 1);
     }
-    let mut cs = cnt.into_iter().collect::<Vec<(i32, i32)>>();
+    let mut cs = cnt.clone().into_iter().collect::<Vec<(i32, i32)>>();
     cs.sort_unstable_by(|(_, a), (_, b)| b.cmp(&a));
-    cs.into_iter()
-        .map(|(c, v)| vec![c; v as usize].into_iter().collect::<i32>())
-        .collect();
+    cs.clone()
+        .into_iter()
+        .map(|(c, v)| vec![c; v as usize].into_iter().collect::<Vec<i32>>())
+        .collect::<Vec<_>>();
 
     println!("c: {:?}", c);
+    println!("cnt: {:?}", cnt);
     println!("cs: {:?}", cs);
     c
 }
