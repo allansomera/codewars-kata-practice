@@ -12,6 +12,10 @@ fn solve(vec: &[i32]) -> Vec<i32> {
         .map(|(c, v)| vec![c; v as usize].into_iter().collect::<Vec<i32>>())
         .collect::<Vec<_>>();
 
+    for (_, el) in cs.iter().enumerate() {
+        println!("el: {:?}", *el);
+    }
+
     println!("c: {:?}", c);
     println!("cnt: {:?}", cnt);
     println!("cs: {:?}", cs);
@@ -19,5 +23,5 @@ fn solve(vec: &[i32]) -> Vec<i32> {
 }
 
 fn main() {
-    println!("{:?}", solve(&vec![3, 3, 3, 5, 5, 7, 7, 2, 9]));
+    println!("{:?}", solve(&vec![2, 3, 5, 3, 7, 9, 5, 3, 7]));
 }
