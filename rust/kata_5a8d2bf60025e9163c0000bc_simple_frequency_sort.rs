@@ -13,7 +13,10 @@ fn solve(vec: &[i32]) -> Vec<i32> {
         .collect::<Vec<_>>();
 
     for (_, el) in cs.iter().enumerate() {
-        println!("el: {:?}", *el);
+        // println!("el: {:?}", *el);
+        for (_, e) in *el.enumerate() {
+            println!("e: {:?}", *e);
+        }
     }
 
     println!("c: {:?}", c);
