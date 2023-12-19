@@ -14,9 +14,11 @@ fn solve(vec: &[i32]) -> Vec<i32> {
 
     for (_, el) in cs.iter().enumerate() {
         // println!("el: {:?}", *el);
-        for (_, e) in *el.enumerate() {
-            println!("e: {:?}", *e);
-        }
+        // for (_, e) in *el {
+        //     println!("e: {:?}", *e);
+        // }
+        println!("0: {:?}", el.0);
+        println!("1: {:?}", el.1);
     }
 
     println!("c: {:?}", c);
