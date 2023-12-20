@@ -12,6 +12,8 @@ fn solve(vec: &[i32]) -> Vec<i32> {
         .map(|(c, v)| vec![c; v as usize].into_iter().collect::<Vec<i32>>())
         .collect::<Vec<_>>();
 
+    let mut freq: Vec<i32> = Vec::new();
+
     for (_, el) in cs.iter().enumerate() {
         // println!("el: {:?}", *el);
         // for (_, e) in *el {
