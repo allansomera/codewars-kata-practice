@@ -6,7 +6,8 @@ fn solve(vec: &[i32]) -> Vec<i32> {
         cnt.insert(*el, cnt.get(&el).unwrap_or(&0) + 1);
     }
     let mut cs = cnt.clone().into_iter().collect::<Vec<(i32, i32)>>();
-    cs.sort_unstable_by(|(_, a), (_, b)| b.cmp(&a));
+    cs.sort_unstable_by(|(a, _), (b, _)| a.cmp(&b));
+    println!("cs: {:?}", cs);
     cs.clone()
         .into_iter()
         .map(|(c, v)| vec![c; v as usize].into_iter().collect::<Vec<i32>>())
