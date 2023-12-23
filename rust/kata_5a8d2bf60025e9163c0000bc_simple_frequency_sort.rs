@@ -1,4 +1,7 @@
+// use itertools::Itertools;
+// use std::cmp::Ordering;
 use std::collections::HashMap;
+
 fn solve(vec: &[i32]) -> Vec<i32> {
     let mut c: Vec<i32> = vec.into_iter().map(|x| *x as i32).collect::<Vec<i32>>();
     let mut cnt = HashMap::new();
@@ -6,7 +9,8 @@ fn solve(vec: &[i32]) -> Vec<i32> {
         cnt.insert(*el, cnt.get(&el).unwrap_or(&0) + 1);
     }
     let mut cs = cnt.clone().into_iter().collect::<Vec<(i32, i32)>>();
-    cs.sort_unstable_by(|(_, a), (_, b)| b.cmp(&a));
+    // cs.sort_unstable_by(|(_, a), (_, b)| b.cmp(&a));
+    let sorted_cs = cs.into_iter().sorted_by(|a, b| Ord::cmp(&b.1, &a.1));
     println!("cs: {:?}", cs);
     cs.clone()
         .into_iter()
