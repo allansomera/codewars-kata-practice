@@ -21,8 +21,11 @@ fn solve(vec: &[i32]) -> Vec<i32> {
 
     for (_, el) in cs.iter().enumerate() {
         // println!("el: {:?}", *el);
-        for (_, e) in *el {
-            println!("e: {:?}", *e);
+        // for (_, e) in *el.iter().enumerate() {
+        //     println!("e: {:?}", *e);
+        // }
+        for _ in 0..el.1 {
+            freq.push(el.0);
         }
         println!("0: {:?}", el.0);
         println!("1: {:?}", el.1);
@@ -31,6 +34,7 @@ fn solve(vec: &[i32]) -> Vec<i32> {
     println!("c: {:?}", c);
     println!("cnt: {:?}", cnt);
     println!("cs: {:?}", cs);
+    println!("freq: {:?}", freq);
     c
 }
 
