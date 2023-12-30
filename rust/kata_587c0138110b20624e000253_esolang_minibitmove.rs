@@ -4,7 +4,8 @@ fn interpreter(tape: &str, data: &str) -> String {
     //     "0" =>
     //
     // }).collect::<String>();
-    println!("{:?}", data);
+    println!("tape: {:?}", tape);
+    println!("data: {:?}", data);
     "test".to_string()
 }
 
