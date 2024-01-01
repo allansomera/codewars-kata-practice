@@ -6,6 +6,7 @@ fn interpreter(tape: &str, data: &str) -> String {
     // }).collect::<String>();
     let mut tape_idx = 0;
     let mut idx;
+    let mut cursor = 0;
     println!("tape: {:?}", tape);
     println!("data: {:?}", data);
     "test".to_string()
