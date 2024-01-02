@@ -7,6 +7,10 @@ fn interpreter(tape: &str, data: &str) -> String {
     let mut tape_idx = 0;
     let mut idx;
     let mut cursor = 0;
+    let mut end: usize = tape.len();
+    let mut p_end: usize = data.len();
+    let mut cur = 0;
+    while cur < end {}
     println!("tape: {:?}", tape);
     println!("data: {:?}", data);
     "test".to_string()
