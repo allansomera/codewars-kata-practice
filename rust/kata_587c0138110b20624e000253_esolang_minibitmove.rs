@@ -10,7 +10,12 @@ fn interpreter(tape: &str, data: &str) -> String {
     let mut end: usize = tape.len();
     let mut p_end: usize = data.len();
     let mut cur = 0;
-    while cur < end {}
+    let mut ins = 0;
+    while cur < end {
+        if tape[ins % prog_end] == '0'.to_string() {
+            cursor += 1;
+        }
+    }
     println!("tape: {:?}", tape);
     println!("data: {:?}", data);
     "test".to_string()
