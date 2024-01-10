@@ -4,6 +4,7 @@ fn interpreter(tape: &str, data: &str) -> String {
     //     "0" =>
     //
     // }).collect::<String>();
+    let arr = data.clone();
     let mut tape_idx = 0;
     let mut idx;
     let mut cursor = 0;
@@ -14,6 +15,8 @@ fn interpreter(tape: &str, data: &str) -> String {
     while cur < end {
         if tape[ins % prog_end] == '0'.to_string() {
             cursor += 1;
+        } else {
+            arr[cursor] ^= 1
         }
     }
     println!("tape: {:?}", tape);
